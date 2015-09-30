@@ -1,49 +1,115 @@
 from django import forms
+from django.contrib.auth.models import User
 
 class ParticipantRegistrationForm(forms.Form):
-
-  iattr = {'class' : 'form-control'}
   name = forms.CharField(
     required = True,
-    widget = forms.TextInput(attrs = iattr),
+    widget = forms.TextInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+      'placeholder' : 'Eg. Animesh Gupta',
+      'autofocus' : 'autofocus'
+    }),
     max_length = 200
   )
   user_name = forms.CharField(
     required = True,
-    widget = forms.TextInput(attrs = iattr),
+    widget = forms.TextInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+      'placeholder' : 'Eg. dark_master'
+    }),
     max_length = 200,
     label = "User Name"
   )
-  email = forms.CharField(
+  email = forms.EmailField(
     required = True,
-    widget = forms.EmailInput(attrs = iattr),
+    widget = forms.EmailInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+      'placeholder' : 'Eg. dark123@gmail.com'
+    }),
     label = "Email Id"
   )
   college = forms.CharField(
     required = True,
-    widget = forms.TextInput(attrs = iattr),
+    widget = forms.TextInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+      'placeholder' : 'Eg. NITK Surathkal'
+    }),
     max_length = 300,
     label = "Institution"
   )
   contact = forms.IntegerField(
     required = True,
-    widget = forms.NumberInput(attrs = iattr),
+    widget = forms.NumberInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+      'placeholder' : 'Eg. 9965309653'
+    }),
     label = "Phone Number"
   )
   password = forms.CharField(
     required = True,
-    widget = forms.PasswordInput(attrs = iattr),
+    widget = forms.PasswordInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required'
+    }),
     label = "Password"
   )
   con_password = forms.CharField(
     required = True,
-    widget = forms.PasswordInput(attrs = iattr),
+    widget = forms.PasswordInput(attrs = {
+      'class' : 'form-control',
+      'required' : 'required',
+    }),
     label = "Confirm Password"
   )
 
   def clean(self):
     cleaned_data = super(ParticipantRegistrationForm, self).clean()
-    print cleaned_data
-    #if cleaned_data['con_password'] != cleaned_data['password']:
-    #  raise forms.ValidationError("Passwords Do Not Match")
+
+    #Checking If Password Is same as confirm password
+    if 'password' in cleaned_data and 'con_password' in cleaned_data and \
+      cleaned_data['con_password'] != cleaned_data['password']:
+      raise forms.ValidationError(('Passwords Do Not Match'), code = 'invalid')
+
+    #Checking if such a user exist already
+    try:
+      user = User.objects.get(username = cleaned_data['user_name'])
+      raise forms.ValidationError(('Username Taken :('), code = 'invalid')
+    except User.DoesNotExist:
+      pass
+
+    #Genuine New User.
     return self.cleaned_data
+
+class SignInForm(forms.Form):
+  user_name = forms.CharField(
+    required = True,
+    widget = forms.TextInput(attrs = {
+      'class' : 'form-control',
+      'placeholder' : 'User Name',
+      'autofocus' : 'autofocus',
+      'required' : 'required',
+    }),
+    max_length = 200,
+    label = "User Name"
+  )
+  password = forms.CharField(
+    required = True,
+    widget = forms.PasswordInput(attrs = {
+      'class' : 'form-control',
+      'placeholder' : 'Password',
+      'required' : 'required',
+    }),
+    label = "Password"
+  )
+
+class SubmitSolutionForm(forms.Form):
+  code = forms.CharField(
+    label = "Paste Your Code Here",
+    widget = forms.TextInput(),
+    required = True,
+  )
