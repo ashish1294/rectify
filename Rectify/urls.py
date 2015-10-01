@@ -22,5 +22,7 @@ urlpatterns = [
     url(r'^/?$|^success/(\d+)/?$', signin),
     url(r'^register_participant/?$', register_participant),
     url(r'^signout/?$', signout),
-    url(r'^dashboard/?$', dashboard)
+    url(r'^dashboard/?$', dashboard),
+    url(r'^problem_list/?$', problem_list),
+    url(r'^solve/(\d+)/?$', solve)
 ]

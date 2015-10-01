@@ -92,7 +92,20 @@ def problem_list(request):
     'phase' : meta.phase(),
     'problem_list' : Problem.objects.all()
   }
+  return render(request, 'problem_list.html', context)
 
 def solve(request, problem_id):
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
+  meta = Metadata.get_meta_data()
+  if meta.phase == meta.YET_TO_START:
+    return HttpResponseRedirect('/problem_list')
+  try:
+    problem = Problem.objects.get(id = int(problem_id))
+  except:
+    return HttpResponseRedirect('/problem_list')
+  context = {
+    'problem' : problem
+  }
+  context.update(csrf(request))
+  return render(request, 'solve.html', context)

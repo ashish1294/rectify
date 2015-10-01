@@ -12,119 +12,132 @@
 
     <title>Rectify - Engineer 2015 | {% block title %}Dashboard {% endblock%}</title>
     <!--<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">-->
-    <!--<link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">-->
-    <!--<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>-->
+    <link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
     <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
-    <!--<script src="{% static 'js/materialize.min.js' %}"></script>-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>-->
+    <style type="text/css">
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      main {
+        flex: 1 0 auto;
+      }
+    </style>
   </head>
   <body>
-    <ul id="user_dropdown" class="dropdown-content">
-      <li><a href="/signout">Log Out</a></li>
-    </ul>
-    <nav>
-      <div class="nav-wrapper blue">
-        <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-        <a class="brand-logo" href="#" style="padding-left: 20px;">Rectify 2015</a>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/problem_list">Problems</a></li>
-            <li><a href="/leaderboard">Leaderboard</a></li>
-            <li><a href="/solutions">Hack Solutions</a></li>
-            <li><a href="/mysubmissions">My Submission</a></li>
-            <li><a class="dropdown-button" href="#!" data-activates="user_dropdown"> Welcome {{request.user.participant.name}} <i class="material-icons right">arrow_drop_down</i></a></li>
-          </ul>
-          <ul id="slide-out" class="side-nav">
-            <p class="blue-text text-darken-2" style="padding-left: 20px;">Welcome {{request.user.participant.name}} </p>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/problem_list">Problems</a></li>
-            <li><a href="/leaderboard">Leaderboard</a></li>
-            <li><a href="/solution">Hack Solutions</a></li>
-            <li><a href="/mysubmissions">My Submission</a></li>
-            <li><a href="/signout">Log Out</a></li>
-          </ul>
+    <main>
+      <ul id="user_dropdown" class="dropdown-content">
+        <li><a href="/signout">Log Out</a></li>
+      </ul>
+      <nav>
+        <div class="nav-wrapper blue">
+          <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+          <a class="brand-logo" href="#" style="padding-left: 20px;">Rectify 2015</a>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li><a href="/dashboard">Dashboard</a></li>
+              <li><a href="/problem_list">Problems</a></li>
+              <li><a href="/leaderboard">Leaderboard</a></li>
+              <li><a href="/solutions">Hack Solutions</a></li>
+              <li><a href="/mysubmissions">My Submission</a></li>
+              <li><a class="dropdown-button" href="#!" data-activates="user_dropdown"> Welcome {{request.user.participant.name}} <i class="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+            <ul id="slide-out" class="side-nav">
+              <p class="blue-text text-darken-2" style="padding-left: 20px;">Welcome {{request.user.participant.name}} </p>
+              <li><a href="/dashboard">Dashboard</a></li>
+              <li><a href="/problem_list">Problems</a></li>
+              <li><a href="/leaderboard">Leaderboard</a></li>
+              <li><a href="/solution">Hack Solutions</a></li>
+              <li><a href="/mysubmissions">My Submission</a></li>
+              <li><a href="/signout">Log Out</a></li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </nav>
-    <div class="container">
-      {% block content %}
-        <div class="row">
-          <h1 class="black-text center">Welcome to Rectify 2015</h1>
-        </div>
-        <div class="row">
+      </nav>
+      <div class="container">
+        {% block content %}
+          <div class="row">
+            <h1 class="black-text center">Welcome to Rectify 2015</h1>
+          </div>
+          <div class="row">
 
-          <!-- Contest Status Card -->
-          <div class="col s12 m12">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title activator blue-text text-darken-4">Contest Status</span>
-                <p>
-                  {% if phase == meta.YET_TO_START %}
-                    The Contest has not started yet. <br/>
-                    <b>Start Time : </b> {{meta.coding_start_time | localtime }}
-                  {% elif phase == meta.CODING_PHASE %}
-                    Coding Phase is in Progress. Go ahead. Code<br/>
-                    <b>Coding Phase End Time : </b> {{meta.coding_end_time | localtime }}
-                  {% elif phase == meta.BREAK_PHASE %}
-                    Coding Phase Has Ended. This is a break time. Relax. And gear up for hacking <br/>
-                    <b>Hacking Start Time : </b> {{meta.hacking_start_time | localtime }}
-                  {% elif phase == meta.HACKING_PHASE %}
-                    Hacking Phase is in Progress. Go ahead. Hack <br/>
-                    <b>Hacking Phase End Time : </b> {{meta.hacking_end_time | localtime }}
+            <!-- Contest Status Card -->
+            <div class="col s12 m12">
+              <div class="card">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Contest Status</span>
+                  <p>
+                    {% if phase == meta.YET_TO_START %}
+                      The Contest has not started yet. <br/>
+                      <b>Start Time : </b> {{meta.coding_start_time | localtime }}
+                    {% elif phase == meta.CODING_PHASE %}
+                      Coding Phase is in Progress. Go ahead. Code<br/>
+                      <b>Coding Phase End Time : </b> {{meta.coding_end_time | localtime }}
+                    {% elif phase == meta.BREAK_PHASE %}
+                      Coding Phase Has Ended. This is a break time. Relax. And gear up for hacking <br/>
+                      <b>Hacking Start Time : </b> {{meta.hacking_start_time | localtime }}
+                    {% elif phase == meta.HACKING_PHASE %}
+                      Hacking Phase is in Progress. Go ahead. Hack <br/>
+                      <b>Hacking Phase End Time : </b> {{meta.hacking_end_time | localtime }}
+                    {% else %}
+                      The contest has ended already. <br/>
+                      <b>Contest End Time : </b> {{meta.hacking_end_time | localtime}}
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Performance Card -->
+            <div class="col s12 m12">
+              <div class="card">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Your Performance<i class="material-icons right">more_vert</i></span>
+                  <p><b>Your Score :</b> {{request.user.participant.total_score}}</p>
+                  <p><b>Problems Solved :</b> {{solved_question}}</p>
+                  <p><b>Solutions Hacked :</b> {{solution_hacked}}</p>
+                </div>
+                <div class="card-reveal">
+                  <span class="card-title blue-text text-darken-4">Your Performance<i class="material-icons right">close</i></span>
+                  <p><b>Please Note :</b>This is just a tentative performance. There may be some solutions in the queue waiting to be judged.</p>
+                  <p>Final Ranking may be different than this.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcement Card -->
+            <div class="col s12 m12">
+              <div class="card">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Announcements<i class="material-icons right">more_vert</i></span>
+                  {% if announcement_list|length == 0 %}
+                    <p>No Messages at the moment !</p>
                   {% else %}
-                    The contest has ended already. <br/>
-                    <b>Contest End Time : </b> {{meta.hacking_end_time | localtime}}
+                    <ul>
+                    {% for notice in announcement_list %}
+                      <li class="valign-wrapper" style="margin-top: 10px;"> <i class="material-icons small">done</i><p class="valign" style="margin-left: 10px;"> {{notice.text}} </p></li>
+                    {% endfor %}
+                  </ul>
                   {% endif %}
-                </p>
+                </div>
+                <div class="card-reveal">
+                  <span class="card-title blue-text text-darken-4">Announcements<i class="material-icons right">close</i></span>
+                  <p>Here you can find all the messages posted by the contest admin for all the contestants. Please Check this regularly for important notice.</p>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- Performance Card -->
-          <div class="col s12 m12">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title activator blue-text text-darken-4">Your Performance<i class="material-icons right">more_vert</i></span>
-                <p><b>Your Score :</b> {{request.user.participant.total_score}}</p>
-                <p><b>Problems Solved :</b> {{solved_question}}</p>
-                <p><b>Solutions Hacked :</b> {{solution_hacked}}</p>
-              </div>
-              <div class="card-reveal">
-                <span class="card-title blue-text text-darken-4">Your Performance<i class="material-icons right">close</i></span>
-                <p><b>Please Note :</b>This is just a tentative performance. There may be some solutions in the queue waiting to be judged.</p>
-                <p>Final Ranking may be different than this.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Announcement Card -->
-          <div class="col s12 m12">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title activator blue-text text-darken-4">Announcements<i class="material-icons right">more_vert</i></span>
-                {% if announcement_list|length == 0 %}
-                  <p>No Messages at the moment !</p>
-                {% else %}
-                  <ul>
-                  {% for notice in announcement_list %}
-                    <li class="valign-wrapper" style="margin-top: 10px;"> <i class="material-icons small">done</i><p class="valign" style="margin-left: 10px;"> {{notice.text}} </p></li>
-                  {% endfor %}
-                </ul>
-                {% endif %}
-              </div>
-              <div class="card-reveal">
-                <span class="card-title blue-text text-darken-4">Announcements<i class="material-icons right">close</i></span>
-                <p>Here you can find all the messages posted by the contest admin for all the contestants. Please Check this regularly for important notice.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endblock %}
-    </div>
+        {% endblock %}
+      </div>
+    </main>
     <footer class="page-footer blue">
       <div class="container">
         <div class="row">

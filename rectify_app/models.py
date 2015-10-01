@@ -74,9 +74,9 @@ class Problem(models.Model):
   @property
   def max_points(self):
     points = 0
-    for case in self.test_cases:
+    for case in self.test_cases.all():
       points += case.points
-    return point
+    return points
 
 class TestCases(models.Model):
   problem = models.ForeignKey(Problem, related_name = 'test_cases')
