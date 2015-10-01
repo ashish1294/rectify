@@ -1,0 +1,35 @@
+{% extends "dashboard.html" %}
+{% block title %} Problem {% endblock title %}
+{% block content %}
+  {% if phase == meta.YET_TO_START %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        Materialize.toast('Contest Has Not Started Yet !!', 4000);
+      });
+    </script>
+    <i class="large material-icons center text-red">error</i>
+    <div class="row">
+      <div class="col s12 m5">
+        <div class="card-panel hoverable">
+          <span class="red-text">You Cannot Access Problems at the moment. Wait for the Contest to start. Patience is appreciated</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="row">
+      {% for problem in problem_list %}
+        <div class="col s12 m12 l12">
+          <div class="card">
+            <div class="card-content white-text">
+              <span class="card-title text-blue" style="font-weight: bold;">{{problem.name}}</span>
+              <p><b>Max Points :</b> {{problem.max_points}}</p>
+            </div>
+            <div class="card-action">
+              <a href="/solve/{{problem.id}}" class="btn waves-effect waves-blue">Solve</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock content %}

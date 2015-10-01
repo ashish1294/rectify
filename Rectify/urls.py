@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^/?$|^success/(\d+)/?$', signin),
     url(r'^register_participant/?$', register_participant),
+    url(r'^signout/?$', signout),
+    url(r'^dashboard/?$', dashboard)
 ]
