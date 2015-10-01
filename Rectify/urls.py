@@ -19,6 +19,6 @@ from rectify_app.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^/?$', signin),
+    url(r'^/?$|^success/(\d+)/?$', signin),
     url(r'^register_participant/?$', register_participant),
 ]
