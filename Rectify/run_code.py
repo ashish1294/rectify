@@ -1,60 +1,46 @@
 import subprocess as sub
-import time
+import time, random, os
 
 
-def fun(code, user_code, input):
-	"""
-		'input' is user input, 'code' is correct code, and 'user_code' is code submitted by the user
-	"""
-	
-	##code, user_code, input can also be files in which case fileIO is not required
-	input_file = open('input', 'w')
-	input_file.write(input)
-	input_file.close()
-
-	code_file = open('user_code.c', 'w')
-	code_file.write(user_code)
-	code_file.close()
-
-	code_file = open('code.c', 'w')
-	code_file.write(code)
-	code_file.close()
-	##
+def fun(code, user_code, user_input):
 
 	#Compile User code
-	compilation_process = sub.Popen('gcc -o user_code user_code.c 2>error', shell=True)
-	exit_status = process.wait()
+	usercode_exec = str(random.randint(100000000, 999999999))
+	compilation = sub.Popen('gcc -o ' + usercode_exec + ' -x c -', stdin=sub.PIPE, stderr=sub.PIPE, shell=True)
+	error_message = compilation.communicate(input = user_code)[1]
 
 	#Check for compilation error
-	if exit_status:
-		error_file = open('error')
-		error_message = error_file.read()
-		error_file.close()
-		return "Compilation Error", error_message
-
-	sub.call(['gcc', '-o', 'code', 'code.c'])		#Compile correct code
+	if error_message:
+		return 1, error_message				#Compilation Error
 
 	#Run user code
-	process = sub.Popen('./user_code < input 1>user_out 2>error', shell=True)
-
+	process = sub.Popen('./'+usercode_exec, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, shell=True)
+	user_out, error_message = process.communicate(input = user_input)
+	
+	
 	time.sleep(2)
 	if process.poll() is None:					#2 sec timeout period
 		process.terminate()
-		return "Time Limit Exceeded"
+		os.remove(usercode_exec)
+		return 2, None							#Timeout Exceeded
+
+	os.remove(usercode_exec)
 
 	# If program exits before timeout, check for errors
-	exit_status = process.wait()
-	if exit_status:
-		error_file = open('error')
-		error_message = error_file.read()
-		error_file.close()
-		return "Runtime Error",error_message
+	if error_message:
+		return 3, error_message					#Runtime Error
 	
-	sub.call('./code < input >req_out', shell=True)		#Run correct code
+	#Compile correct code
+	#if 'code' not in os.listdir('.'):
+	compilation = sub.Popen('gcc -o code -x c -', stdin=sub.PIPE, stderr=sub.PIPE, shell=True)
+	error_message = compilation.communicate(input = code)[1]	
 
-	different = sub.call('diff user_out req_out', shell=True)
+	#Run correct code
+	server_code = sub.Popen('./code',stdin=sub.PIPE, stdout=sub.PIPE, shell=True)		
+	req_out = server_code.communicate(input = user_input)[0]
+	os.remove('code')
 
-	if not different:
-		return "Success"
+	if user_out == req_out:
+		return 0, None				#Correct Ans
 	else:
-		return "Wrong Answer"
+		return 4, None				#Wrong Ans
