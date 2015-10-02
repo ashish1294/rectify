@@ -69,7 +69,8 @@ class Participant(models.Model):
 class Problem(models.Model):
   name = models.CharField(max_length = 100)
   problem_text = models.TextField()
-  code = models.TextField()
+  code = models.TextField(default = '')
+  correct_code = models.TextField(default = '')
 
   @property
   def max_points(self):
@@ -89,30 +90,45 @@ class TestCases(models.Model):
   '''ToDo - Impose Memory Limit'''
 
 class Solution(models.Model):
-  WAITING = 'wt'
   PROCESSING = 'pr'
   COMPILE_ERROR = 'ce'
-  EASY_CASE_PASSED = 'ecp'
-  ACCEPTED = 'ac'
-  WRONG_ANS = 'wa'
-  RUNTIME_ERROR = 're'
-  TIME_LIMIT_EXCEEDED = 'tle'
-  UNKNOWN_ERROR = 'ue'
+  PRE_TEST_FAILED = 'ptf'
+  PRE_TEST_PASSED = 'ptp'
+  SYS_TEST_FAILED = 'stf'
+  SYS_TEST_PASSED = 'stp'
 
-  team = models.ForeignKey(Participant, related_name = 'solutions')
+  participant = models.ForeignKey(Participant, related_name = 'solutions')
   problem = models.ForeignKey(Problem)
   code = models.TextField()
 
   ''' Currently the application only supports cpp. But in Future the Support for
   other languages should be easy to add :)'''
   language = models.CharField(max_length = 10, default = 'cpp')
-
+  test_results = models.ManyToManyField(TestCases, through = 'TestCaseResult')
   score_earned = models.IntegerField(default = 0)
-  compile_throw = models.TextField()
-  status = models.CharField(max_length = 10)
+  compile_throw = models.TextField(default = '')
+  status = models.CharField(max_length = 10, default = PROCESSING)
   score_earned = models.IntegerField(default = 0)
   submit_time = models.DateTimeField(auto_now_add = True)
   hackers = models.ManyToManyField(Participant, through = 'Challenge')
+
+class TestCaseResult(models.Model):
+  WAITING = 'wt'
+  ACCEPTED = 'ac'
+  WRONG_ANS = 'wa'
+  RUNTIME_ERROR = 're'
+  TIME_LIMIT_EXCEEDED = 'tle'
+  UNKNOWN_ERROR = 'ue'
+
+  solution = models.ForeignKey(Solution,
+    on_delete = models.CASCADE,
+    related_name = 'test_case_results'
+  )
+  test_case = models.ForeignKey(TestCases,
+    on_delete = models.CASCADE,
+    related_name = 'should_not_be_accessed'
+  )
+  status = models.CharField(max_length = 10, default = WAITING)
 
 class Challenge(models.Model):
   challenger = models.ForeignKey(Participant,

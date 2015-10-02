@@ -7,6 +7,7 @@ from models import *
 from django.http import HttpResponseRedirect
 from django.db import transaction, IntegrityError
 import datetime
+from tasks import
 # Create your views here.
 
 def signin(request, message_code = 0):
@@ -95,6 +96,7 @@ def problem_list(request):
   return render(request, 'problem_list.html', context)
 
 def solve(request, problem_id):
+  print request.method
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
   meta = Metadata.get_meta_data()
@@ -102,10 +104,21 @@ def solve(request, problem_id):
     return HttpResponseRedirect('/problem_list')
   try:
     problem = Problem.objects.get(id = int(problem_id))
-  except:
+  except Problem.DoesNotExist, ValueError:
     return HttpResponseRedirect('/problem_list')
-  context = {
-    'problem' : problem
-  }
+
+  if request.method == 'POST' and 'code_submit' in request.POST \
+    and 'code' in request.POST:
+    #This Means User has Submitted Code
+    solution = Solution(
+      participant = request.user.participant,
+      problem = problem,
+      code = request.POST['code'],
+    )
+    solution.save()
+
+  context = { 'problem' : problem }
   context.update(csrf(request))
   return render(request, 'solve.html', context)
+
+def solution(request)

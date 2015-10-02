@@ -1,5 +1,5 @@
 {% extends "dashboard.html" %}
-{% block title %} Problem {% endblock title %}
+{% block title %} Problem List{% endblock title %}
 {% block content %}
   {% if phase == meta.YET_TO_START %}
     <script type="text/javascript">
@@ -16,6 +16,7 @@
       </div>
     </div>
   {% else %}
+    <br/>
     <div class="row">
       {% for problem in problem_list %}
         <div class="col s12 m12 l12">
