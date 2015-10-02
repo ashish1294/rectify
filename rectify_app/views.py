@@ -156,3 +156,9 @@ def my_submissions(request):
     return HttpResponseRedirect('/')
   context = {'solution_list' : request.user.participant.solutions.all()}
   return render(request, 'mysubmissions.html', context)
+
+def leaderboard(request):
+  if request.user.is_authenticated() is False:
+    return HttpResponseRedirect('/')
+  context = {'rank_list' : Participant.objects.filter().order_by('-org_score')}
+  return render(request, 'leaderboard.html', context)

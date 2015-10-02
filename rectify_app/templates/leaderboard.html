@@ -1,0 +1,32 @@
+{% extends "dashboard.html" %}
+{% block title %}Leaderboard{% endblock title %}
+{% block content %}
+  <br/>
+  <div class="row">
+    <div class="col s12 m12 l12 center">
+      <h3>Contest Leaderboard</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <table class="centered responsive-table highlight">
+        <thead>
+          <tr>
+            <th datafield="rank">Rank</th>
+            <th data-field="participant">Participant</th>
+            <th data-field="score">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for participant in rank_list %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{participant.name}}</td>
+              <td>{{participant.org_score}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock content %}

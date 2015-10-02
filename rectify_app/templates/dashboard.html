@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rectify, Engineer, NITK Surathkal">
     <meta name="author" content="Ashish Kedia, 12IT14">
-    <link rel="icon" href="favicon.ico">
-
+    <link rel="icon" href="{% static 'images/favicon.png'%}">
     <title>Rectify - Engineer 2015 | {% block title %}Dashboard {% endblock%}</title>
     <!--<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">-->
     <link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">
@@ -17,7 +16,7 @@
     <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
     <script src="{% static 'js/materialize.min.js' %}"></script>
     <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">-->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>-->
     <style type="text/css">
@@ -29,6 +28,19 @@
       main {
         flex: 1 0 auto;
       }
+      .engi_logo_image {
+        display : inline-block;
+        height : 150px;
+        position : absolute;
+      }
+      .img_rot{
+        -webkit-animation:spin 8s linear infinite;
+        -moz-animation:spin 8s linear infinite;
+        animation:spin 8s linear infinite;
+      }
+      @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+      @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+      @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
     </style>
   </head>
   <body>
@@ -142,9 +154,17 @@
     <footer class="page-footer blue">
       <div class="container">
         <div class="row">
-          <div class="col l12 s12 m12">
+          <div class="col l8 s12 m12">
             <h5 class="white-text">Rectify @ Engineer 2015</h5>
             <p class="grey-text text-lighten-4">This Application was developed for Rectify event of Engineer 2015</p>
+            <br/></br>
+          </div>
+          <div class="col l4 m12 s12 center">
+            <div style="min-height : 150px;" class="center">
+              <img src="{% static 'images/17.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+              <img src="{% static 'images/ER.png' %}" alt="Engineer Logo Background" class="engi_logo_image img_rot"/>
+              <img src="{% static 'images/circle_12.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+            </div>
           </div>
         </div>
       </div>
