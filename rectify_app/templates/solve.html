@@ -10,6 +10,7 @@
     {% endautoescape %}
   </p>
   <br/>
+  {% if phase == meta.CODING_PHASE %}
   <form action="" method="POST" id="problem_submit_form">
     {% csrf_token %}
     <div class="row">
@@ -21,7 +22,7 @@
 {{problem.code}}
 </pre>
       </div>
-      <input type="hidden" id="code" value=""/>
+      <input type="hidden" name="code" id="code" value="Invalid Code !!"/>
       <div class="s12 m12 l12 center">
         <button id="code_submit" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable center">Submit Code</button>
       </div>
@@ -37,4 +38,13 @@
       $('form#problem_submit_form').submit();
     });
   </script>
+  {% else %}
+    <div class="row center">
+      <div class="col s12 m12 l12">
+        <div class="card-panel hoverable">
+          <span class="red-text">Coding Phase has ended ! No more solutions can be submitted !</span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 {% endblock content %}

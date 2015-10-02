@@ -1,4 +1,6 @@
 {% extends "dashboard.html" %}
+{% load tz %}
+{% load customtag %}
 {% block title %} View Solution - {{solution.problem.name}} {% endblock title %}
 {% block content %}
   {% if not solution %}
@@ -11,7 +13,7 @@
       <div class="col l12 m12 s12">
         <i class="large material-icons red-text">error</i>
       </div>
-      <div class="col s12 m6 l12">
+      <div class="col s12 m12 l12">
         <div class="card-panel hoverable">
           <span class="red-text">This solution is unavailable !</span>
         </div>
@@ -19,36 +21,88 @@
     </div>
   {% else %}
     <br/>
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <span class="card-title activator blue-text text-darken-4">At A Glance</span>
+          </div>
+          <div class="col s12 m12 l12">
+            <b>Submit Time : </b> {{ solution.submit_time | localtime }} <br/>
+            <b>Points Earned : </b> {{solution.score_earned}} <br/>
+            <b>Status : </b>
+            {% if solution.status == solution.PROCESSING %}
+              <span class="gray-text text-darken-2">Processing</span>
+            {% elif solution.status == solution.COMPILE_ERROR %}
+              <span class="yellow-text text-darken-3">Compilation Error</span> <br/>
+              <b>Error Message : </b> <br/>
+              <p>{{solution.compile_throw}}</p>
+            {% elif solution.status == solution.PRE_TEST_FAILED %}
+              <span class="red-text">Pre Tests Failed</span>
+            {% elif solution.status == solution.PRE_TEST_PASSED %}
+              <span class="green-text">Pre Tests Passed</span>
+            {% elif solution.status == solution.SYS_TEST_FAILED %}
+              <span class="red-text">System Test Passed</span>
+            {% elif solution.status == solution.SYS_TEST_PASSED %}
+              <span class="green-text">System Tests Passed</span>
+            {% endif %} <br/>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
-      {% for problem in problem_list %}
-        <div class="col s12 m12 l12">
-          <div class="card">
-            <div class="card-content">
-              <div class="row">
-                <div class="col s12 m12 l12 valign">
-                  <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;">{{solution.problem.name}}</span>
-                </div>
+      <div class="col s12 m12 l12">
+        <div class="card">
+          <div class="card-content">
+            <div class="row">
+              <div class="col s12 m12 l12 valign">
+                <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;">{{solution.problem.name}} - Detailed Result</span>
               </div>
-              <div class="row">
-                <table class="striped">
-                  <thead>
+            </div>
+            <div class="row">
+              <table class="striped centered">
+                <thead>
+                  <tr>
+                    <th data-field="id">Test Case</th>
+                    <th data-field="res">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for result_row in solution.test_case_results.all %}
                     <tr>
-                      <th data-field="id1">Test Case</th>
-                      <th data-field="res1">Result</th>
-                      <th data-field="id2">Test Case</th>
-                      <th data-field="res2">Result</th>
+                      <td>{{forloop.counter}}</td>
+                      <td>
+                        {% if res.status == res.WAITING %}
+                          <span class="grey-text text-darken-2">Waiting</span>
+                        {% elif res.status == res.ACCEPTED %}
+                          <span class="green-text">Accepted</span>
+                        {% elif res.status == res.WRONG_ANS %}
+                          <span class="red-text">Wrong Answer</span>
+                        {% elif res.status == res.RUN_TIME_ERROR %}
+                          <span class="red-text">Run Time Error</span>
+                        {% elif res.status == res.TIME_LIMIT_EXCEEDED %}
+                          <span class="yellow-text text-darken-4">Time Limit Exceeded</span>
+                        {% elif res.status == res.UNKNOWN_ERROR %}
+                          <span class="red-text">Unknown Error</span>
+                        {% endif %}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {% for testcase_result in solution.test_case_results.all %}
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+          </div>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endblock content %}

@@ -106,10 +106,3 @@ class SignInForm(forms.Form):
     }),
     label = "Password"
   )
-
-class SubmitSolutionForm(forms.Form):
-  code = forms.CharField(
-    label = "Paste Your Code Here",
-    widget = forms.TextInput(),
-    required = True,
-  )

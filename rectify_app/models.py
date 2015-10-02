@@ -36,19 +36,20 @@ class Metadata(models.Model):
     else:
       return res[0]
 
-  def phase(self):
-    meta = self.get_meta_data()
+  @classmethod
+  def phase(cls):
+    meta = cls.get_meta_data()
     current_time = timezone.now()
     if current_time < meta.coding_start_time:
-      return self.YET_TO_START
+      return cls.YET_TO_START
     elif current_time <= meta.coding_end_time:
-      return self.CODING_PHASE
+      return cls.CODING_PHASE
     elif current_time < meta.hacking_start_time:
-      return self.BREAK_PHASE
+      return cls.BREAK_PHASE
     elif current_time <= meta.hacking_end_time:
-      return self.HACKING_PHASE
+      return cls.HACKING_PHASE
     else:
-      return self.ENDED
+      return cls.ENDED
 
 class Announcements(models.Model):
   text = models.TextField()
@@ -108,9 +109,9 @@ class Solution(models.Model):
   score_earned = models.IntegerField(default = 0)
   compile_throw = models.TextField(default = '')
   status = models.CharField(max_length = 10, default = PROCESSING)
-  score_earned = models.IntegerField(default = 0)
   submit_time = models.DateTimeField(auto_now_add = True)
   hackers = models.ManyToManyField(Participant, through = 'Challenge')
+  is_hacked = models.BooleanField(default = False)
 
 class TestCaseResult(models.Model):
   WAITING = 'wt'

@@ -106,19 +106,36 @@ def solve(request, problem_id):
   except Problem.DoesNotExist, ValueError:
     return HttpResponseRedirect('/problem_list')
 
-  if request.method == 'POST' and 'code_submit' in request.POST \
-    and 'code' in request.POST:
-    #This Means User has Submitted Code
-    solution = Solution(
-      participant = request.user.participant,
-      problem = problem,
-      code = request.POST['code'],
-    )
-    solution.save()
-    judge_solution_easy_cases.delay(solution.id)
-    return HttpResponseRedirect('/solution/' + str(solution.id))
-  context = { 'problem' : problem }
-  context.update(csrf(request))
+  context = {
+    'problem' : problem,
+    'meta' : Metadata.get_meta_data(),
+    'phase' : Metadata.phase(),
+  }
+
+  if context['phase'] == Metadata.CODING_PHASE:
+    #Coding Phase is Going On
+    if request.method == 'POST' and 'code' in request.POST:
+      #This Means User has Submitted Code
+      with transaction.atomic():
+        # Create Solution Objects in Transaction
+        solution = Solution(
+          participant = request.user.participant,
+          problem = problem,
+          code = request.POST['code'],
+        )
+        solution.save()
+        pre_test_list = solution.problem.test_cases.filter(
+          is_system_test = False)
+        for pre_test in pre_test_list:
+          #Result of Each Testcase is created with waiting status
+          result = TestCaseResult(solution = solution, test_case = pre_test)
+          result.save()
+      #Pass the solution to celery workers
+      judge_solution_easy_cases.delay(solution.id)
+      return HttpResponseRedirect('/solution/' + str(solution.id))
+
+    #Update the context because form will be displayed in coding phase
+    context.update(csrf(request))
   return render(request, 'solve.html', context)
 
 def solution(request, solution_id):
