@@ -7,7 +7,7 @@ from models import *
 from django.http import HttpResponseRedirect
 from django.db import transaction, IntegrityError
 import datetime
-from tasks import
+from tasks import *
 # Create your views here.
 
 def signin(request, message_code = 0):
@@ -28,6 +28,7 @@ def signin(request, message_code = 0):
       if user is not None:
         if user.is_active:
           login(request, user)
+          return HttpResponseRedirect('/dashboard')
         else:
           #User Account is Disabled
           form.add_error(field = None, error = forms.ValidationError(('Your Account is Disabled !! Contact Admin')))
@@ -80,7 +81,6 @@ def dashboard(request):
     return HttpResponseRedirect('/')
   meta = Metadata.get_meta_data()
   anl = Announcements.objects.all()
-  print "cc = ",  anl
   context = { 'meta' : meta, 'phase' : meta.phase(), 'announcement_list' : anl }
   return render(request, 'dashboard.html', context)
 
@@ -96,7 +96,6 @@ def problem_list(request):
   return render(request, 'problem_list.html', context)
 
 def solve(request, problem_id):
-  print request.method
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
   meta = Metadata.get_meta_data()
@@ -116,9 +115,21 @@ def solve(request, problem_id):
       code = request.POST['code'],
     )
     solution.save()
-
+    judge_solution_easy_cases.delay(solution.id)
+    return HttpResponseRedirect('/solution/' + str(solution.id))
   context = { 'problem' : problem }
   context.update(csrf(request))
   return render(request, 'solve.html', context)
 
-def solution(request)
+def solution(request, solution_id):
+  if request.user.is_authenticated() is False:
+    return HttpResponseRedirect('/')
+  context = {}
+  try:
+    context['solution'] = Solution.objects.get(
+      id = int(solution_id),
+      participant = request.user.participant,
+    )
+  except Solution.DoesNotExist, ValueError:
+    pass
+  return render(request, 'solution_view.html', context)

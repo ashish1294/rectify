@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^signout/?$', signout),
     url(r'^dashboard/?$', dashboard),
     url(r'^problem_list/?$', problem_list),
-    url(r'^solve/(\d+)/?$', solve)
+    url(r'^solve/(\d+)/?$', solve),
+    url(r'^solution/(\d+)/?$', solution),
 ]
