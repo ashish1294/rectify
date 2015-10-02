@@ -1,0 +1,49 @@
+{% extends 'dashboard.html' %}
+{% load tz %}
+{% block title %}{{request.user.participant.name}}'s Submission{% endblock title %}
+{% block content %}
+    <br/>
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <div class="card hoverable">
+          <div class="card-content">
+            <span class="card-title activator blue-text text-darken-4">Statistics</span> <br/>
+            <b>Total Submissions : </b>{{solution_list|length}}
+          </div>
+        </div>
+      </div>
+      {% for solution in solution_list %}
+        <div class="col s12 m12 l12">
+          <div class="card hoverable center">
+            <div class="card-content">
+              <div class="row valign-wrapper">
+                <div class="col s12 m4 l4">
+                  <span class="card-title activator blue-text text-darken-4"> {{solution.problem.name}} </span>
+                </div>
+                <div class="col s12 m4 l4">
+                  <b>Status :</b>
+                  {% if solution.status == solution.PROCESSING %}
+                    <span class="grey-text text-darken-2">Processing</span>
+                  {% elif solution.status == solution.COMPILE_ERROR %}
+                    <span class="yellow-text text-darken-3">Compilation Error</span>
+                  {% elif solution.status == solution.PRE_TEST_FAILED %}
+                    <span class="red-text">Pre Tests Failed</span>
+                  {% elif solution.status == solution.PRE_TEST_PASSED %}
+                    <span class="green-text">Pre Tests Passed</span>
+                  {% elif solution.status == solution.SYS_TEST_FAILED %}
+                    <span class="red-text">System Test Passed</span>
+                  {% elif solution.status == solution.SYS_TEST_PASSED %}
+                    <span class="green-text">System Tests Passed</span>
+                  {% endif %} <br/>
+                  <b>Time :</b> {{solution.submit_time|localtime}}
+                </div>
+                <div class="col s12 m4 l4">
+                  <a href="/solution/{{solution.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+{% endblock content %}

@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^problem_list/?$', problem_list),
     url(r'^solve/(\d+)/?$', solve),
     url(r'^solution/(\d+)/?$', solution),
+    url(r'^mysubmissions/?$', my_submissions),
 ]

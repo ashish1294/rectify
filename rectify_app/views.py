@@ -150,3 +150,9 @@ def solution(request, solution_id):
   except Solution.DoesNotExist, ValueError:
     pass
   return render(request, 'solution_view.html', context)
+
+def my_submissions(request):
+  if request.user.is_authenticated() is False:
+    return HttpResponseRedirect('/')
+  context = {'solution_list' : request.user.participant.solutions.all()}
+  return render(request, 'mysubmissions.html', context)

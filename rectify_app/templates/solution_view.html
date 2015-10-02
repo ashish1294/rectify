@@ -1,8 +1,9 @@
 {% extends "dashboard.html" %}
 {% load tz %}
-{% load customtag %}
+{% load staticfiles %}
 {% block title %} View Solution - {{solution.problem.name}} {% endblock title %}
 {% block content %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
   {% if not solution %}
     <script type="text/javascript">
       $(document).ready(function(){
@@ -21,7 +22,7 @@
     </div>
   {% else %}
     <br/>
-    <div class="card">
+    <div class="card hoverable">
       <div class="card-content">
         <div class="row">
           <div class="col s12 m12 l12">
@@ -32,7 +33,7 @@
             <b>Points Earned : </b> {{solution.score_earned}} <br/>
             <b>Status : </b>
             {% if solution.status == solution.PROCESSING %}
-              <span class="gray-text text-darken-2">Processing</span>
+              <span class="grey-text text-darken-2">Processing</span>
             {% elif solution.status == solution.COMPILE_ERROR %}
               <span class="yellow-text text-darken-3">Compilation Error</span> <br/>
               <b>Error Message : </b> <br/>
@@ -52,7 +53,7 @@
     </div>
     <div class="row">
       <div class="col s12 m12 l12">
-        <div class="card">
+        <div class="card hoverable">
           <div class="card-content">
             <div class="row">
               <div class="col s12 m12 l12 valign">
@@ -97,12 +98,15 @@
     </div>
     <div class="row">
       <div class="col s12 m12 l12">
-        <div class="card">
+        <div class="card hoverable">
           <div class="card-content">
             <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+            <pre><code class="cpp">{{solution.code}}</code></pre>
           </div>
         </div>
       </div>
     </div>
+    <script src="{% static 'js/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
   {% endif %}
 {% endblock content %}
