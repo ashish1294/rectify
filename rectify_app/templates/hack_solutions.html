@@ -1,0 +1,55 @@
+{% extends "dashboard.html" %}
+{% block title %}Hack Solution{% endblock title %}
+{% block content %}
+  <br/> <br/>
+  {% if phase != meta.HACKING_PHASE %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        Materialize.toast('{{error}}', 4000);
+      });
+    </script>
+    <div class="row center">
+      <div class="col l12 m12 s12">
+        <i class="large material-icons red-text">error</i>
+      </div>
+      <div class="col s12 m12 l12">
+        <div class="card-panel hoverable">
+          <span class="red-text">Solutions cannot be challenged in this phase of the contest.</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    {% if form.non_field_errors %}
+      <div class="row center">
+        <div class="col l12 m12 s12">
+          <i class="large material-icons red-text">error</i>
+        </div>
+        <div class="col s12 m12 l12">
+          <div class="card-panel hoverable">
+            <span class="red-text">{{form.non_field_errors}}</span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+      <form action="" method="POST" id="fetch_solution_form">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col s12 m6 l4 input-field">
+            {{form.participant}}
+            <label for="{{form.participant.id_for_label}}">Participant</label>
+          </div>
+          <div class="col s12 m6 l4 input-field">
+            {{form.problem}}
+            <label for="{{form.problem.if_for_label}}">Problem</label>
+          </div>
+          <div class="col s12 m12 l4 center input-field">
+            <button id="submit_details" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable center">Fetch Solution</button>
+          </div>
+        </div>
+      </form>
+      <script type="text/javascript">
+        $('#submit_details').click(function (){ $('form#fetch_solution_form').submit();});
+        $(document).ready(function() { $('select').material_select();});
+      </script>
+  {% endif %}
+{% endblock content %}

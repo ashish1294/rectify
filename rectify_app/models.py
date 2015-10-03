@@ -36,20 +36,19 @@ class Metadata(models.Model):
     else:
       return res[0]
 
-  @classmethod
-  def phase(cls):
-    meta = cls.get_meta_data()
+  @property
+  def phase(self):
     current_time = timezone.now()
-    if current_time < meta.coding_start_time:
-      return cls.YET_TO_START
-    elif current_time <= meta.coding_end_time:
-      return cls.CODING_PHASE
-    elif current_time < meta.hacking_start_time:
-      return cls.BREAK_PHASE
-    elif current_time <= meta.hacking_end_time:
-      return cls.HACKING_PHASE
+    if current_time < self.coding_start_time:
+      return self.YET_TO_START
+    elif current_time <= self.coding_end_time:
+      return self.CODING_PHASE
+    elif current_time < self.hacking_start_time:
+      return self.BREAK_PHASE
+    elif current_time <= self.hacking_end_time:
+      return self.HACKING_PHASE
     else:
-      return cls.ENDED
+      return self.ENDED
 
 class Announcements(models.Model):
   text = models.TextField()
@@ -132,6 +131,10 @@ class TestCaseResult(models.Model):
   status = models.CharField(max_length = 10, default = WAITING)
 
 class Challenge(models.Model):
+  WAITING = 'wt'
+  SUCCESSFUL = 'succ'
+  FAILED = 'fail'
+
   challenger = models.ForeignKey(Participant,
     on_delete = models.CASCADE,
     related_name = 'challenges_posted'
@@ -141,3 +144,4 @@ class Challenge(models.Model):
     related_name = 'challenges'
   )
   input_data = models.TextField()
+  status = models.CharField(max_length = 10, default = WAITING)

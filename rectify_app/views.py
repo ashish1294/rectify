@@ -81,7 +81,7 @@ def dashboard(request):
     return HttpResponseRedirect('/')
   meta = Metadata.get_meta_data()
   anl = Announcements.objects.all()
-  context = { 'meta' : meta, 'phase' : meta.phase(), 'announcement_list' : anl }
+  context = { 'meta' : meta, 'phase' : meta.phase, 'announcement_list' : anl }
   return render(request, 'dashboard.html', context)
 
 def problem_list(request):
@@ -90,8 +90,7 @@ def problem_list(request):
   meta = Metadata.get_meta_data()
   context = {
     'meta' : meta,
-    'phase' : meta.phase(),
-    'problem_list' : Problem.objects.all()
+    'phase' : meta.phase,
   }
   return render(request, 'problem_list.html', context)
 
@@ -105,11 +104,11 @@ def solve(request, problem_id):
     problem = Problem.objects.get(id = int(problem_id))
   except Problem.DoesNotExist, ValueError:
     return HttpResponseRedirect('/problem_list')
-
+  meta = Metadata.get_meta_data()
   context = {
     'problem' : problem,
-    'meta' : Metadata.get_meta_data(),
-    'phase' : Metadata.phase(),
+    'meta' : meta,
+    'phase' : meta.phase,
   }
 
   if context['phase'] == Metadata.CODING_PHASE:
@@ -160,5 +159,50 @@ def my_submissions(request):
 def leaderboard(request):
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
-  context = {'rank_list' : Participant.objects.filter().order_by('-org_score')}
+  context = {'rank_list' : Participant.objects.only('name',
+    'org_score').order_by('-org_score') }
   return render(request, 'leaderboard.html', context)
+
+def hack_solutions(request):
+  meta = Metadata.get_meta_data()
+  context = { 'meta' :  meta, 'phase' : meta.phase}
+
+  if meta.phase == meta.HACKING_PHASE:
+    if request.method == 'POST':
+      form = HackingRequestForm(request.POST, prefix = 'fetch_sol')
+      if form.is_valid():
+        p_id = int(form.cleaned_data['participant'])
+        if p_id != request.user.participant.id:
+          solution_list = Solution.objects.filter(
+            participant__id = p_id,
+            problem__id = int(form.cleaned_data['problem']),
+            status = Solution.PRE_TEST_PASSED,
+          ).order_by('-submit_time')[:1]
+          if len(solution_list) is not 1:
+            form.add_error(
+              field = None,
+              error = forms.ValidationError('This participant has not submitted any code for this problem')
+            )
+          elif solution_list[0].is_hacked == True:
+            form.add_error(
+              field = None,
+              error = forms.ValidationError('This solution has already been hacked. Try Another One !!')
+            )
+          else:
+            context['solution'] = solution_list[0]
+        else:
+          #User is trying to hack his/her own solution
+          form.add_error(field = None, error = forms.ValidationError('You cannot hack your own solution :('))
+      else:
+        form.add_error(field = None, error = forms.ValidationError('Invalid Input in Form !'))
+    else:
+      #Form is required only in Hacking Phase
+      form = HackingRequestForm(prefix = 'fetch_sol')
+    context['form'] = form
+  elif meta.phase < meta.HACKING_PHASE:
+    context['error'] = 'Hacking phase has not started yet !!'
+  else:
+    context['error'] = 'Hacking phase has ended !! No More Hacks Allowed !!'
+
+  context.update(csrf(request))
+  return render(request, 'hack_solutions.html', context)

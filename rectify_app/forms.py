@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-
+from  models import Participant, Problem
 class ParticipantRegistrationForm(forms.Form):
   name = forms.CharField(
     required = True,
@@ -106,3 +106,28 @@ class SignInForm(forms.Form):
     }),
     label = "Password"
   )
+
+class HackingRequestForm(forms.Form):
+  participant = forms.ChoiceField(
+    required = True,
+    label = "Participant"
+  )
+  problem = forms.ChoiceField(
+    required = True,
+    label = "Problem",
+  )
+
+  def __init__(self, *args, **kwargs):
+    super(HackingRequestForm, self).__init__(*args, **kwargs)
+    self.fields['participant'] = forms.ChoiceField(
+      choices = tuple((p.id, p.name) for p in Participant.objects.only('id',
+        'name')),
+      required = True,
+      label = "Participant"
+    )
+    self.fields['problem'] = forms.ChoiceField(
+      choices = tuple((p.id, p.name) for p in Problem.objects.only('id',
+        'name')),
+      required = True,
+      label = "Problem"
+    )
