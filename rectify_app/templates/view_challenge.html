@@ -1,0 +1,45 @@
+{% extends "dashboard.html" %}
+{% load tz %}
+{% block title %} View Challenge {% endblock title %}
+{% block content %}
+  <br/> <br/>
+  {% if not challenge %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        Materialize.toast('Challenge Unavailable', 4000);
+      });
+    </script>
+    <div class="row center">
+      <div class="col l12 m12 s12">
+        <i class="large material-icons red-text">error</i>
+      </div>
+      <div class="col s12 m12 l12">
+        <div class="card-panel hoverable">
+          <span class="red-text">Invalid Challenge !</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <br/>
+    <div class="card hoverable">
+      <div class="card-content">
+        <span class="card-title activator blue-text text-darken-4">Hack Information</span> <br/>
+        <p><b>Sumit Time : </b> {{challenge.submit_time|localtime}} </p>
+        <p><b>Against : </b> {{challenge.solution.participant.name}}</p>
+        <p><b>Problem : </b><a href="/solve/{{challenge.solution.problem.id}}">{{challenge.solution.problem.name}}</a></p>
+        <p><b>Status : </b>
+          {% if challenge.status == challenge.WAITING %}
+            <span class="grey-text text-darken-2">Awaiting Result</span>
+          {% elif challenge.status == challenge.INVALID_INPUT %}
+            <span class="red-text">Invalid Input</span>
+          {% elif challenge.status == challenge.SUCCESSFUL %}
+            <span class="green-text">Successful</span>
+          {% elif challenge.status == challenge.FAILED %}
+            <span class="red-text">Failed</span>
+          {% endif %}
+        </p>
+        <p><b>Input Data :</b> <br/>{{challenge.input_data}}</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock content %}

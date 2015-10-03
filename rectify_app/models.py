@@ -152,3 +152,4 @@ class Challenge(models.Model):
   )
   input_data = models.TextField()
   status = models.CharField(max_length = 10, default = WAITING)
+  submit_time = models.DateTimeField(auto_now_add = True)

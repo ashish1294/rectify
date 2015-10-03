@@ -13,7 +13,7 @@ def raise_timeout_exception():
   raise ProcessTimeOutException
 
 @shared_task
-def judge_solution_easy_cases(solution_id):
+def judge_solution_easy_cases(solution_id, is_system_test):
   print "Juding Solution id ", solution_id
   solution = Solution.objects.get(id = solution_id)
   result_list = solution.test_case_results.all()
@@ -35,8 +35,8 @@ def judge_solution_easy_cases(solution_id):
   )
   (output, error) = process.communicate()
   ret_code = process.poll()
-  if ret_code == 0:
-    #Compilation Successful
+  if ret_code == 0: #Compilation Successful
+    # Total Scores that a participant can earn
     total_score = 0
     #Max Score earned by participant for this problem
     max_score = solution.participant.solutions.filter(
@@ -46,40 +46,49 @@ def judge_solution_easy_cases(solution_id):
     #Judging Each Solution
     for result in result_list:
       total_score += result.test_case.points
-      proc = subprocess.Popen(['./' + file_name],
-        stdin = subprocess.PIPE,
-        stdout = subprocess.PIPE)
-      try:
-        # Creating a TimeOut. SIGALRM is passed after timelimit
-        signal.signal(signal.SIGALRM, raise_timeout_exception)
-        signal.alarm(solution.problem.time_limit + 1)
-        output = proc.communicate(stdin = result.test_case.input_data)[0]
-        signal.alarm(0)
-        ret_code = proc.poll()
-        if ret_code < 0 :
-          # Runtime Error Was Called
-          result.status = TestCaseResult.RUNTIME_ERROR
-        else:
-          #Removing Whitespace from the output before comparing
-          output = str(output).translate(None, string.whitespace)
-          if output == result.test_case.output_data:
-            result.status = TestCaseResult.ACCEPTED
-            score_earned += result.test_case.points
+      if result.status == TestCaseResult.WAITING:
+        proc = subprocess.Popen(['./' + file_name],
+          stdin = subprocess.PIPE,
+          stdout = subprocess.PIPE)
+        try:
+          # Creating a TimeOut. SIGALRM is passed after timelimit
+          signal.signal(signal.SIGALRM, raise_timeout_exception)
+          signal.alarm(solution.problem.time_limit + 1)
+          output = proc.communicate(stdin = result.test_case.input_data)[0]
+          signal.alarm(0)
+          ret_code = proc.poll()
+          if ret_code < 0 :
+            # Runtime Error Was Called
+            result.status = TestCaseResult.RUNTIME_ERROR
           else:
-            result.status = TestCaseResult.WRONG_ANS
-      except ProcessTimeOutException:
-        result.status = TestCaseResult.TIME_LIMIT_EXCEEDED
-      except Exception:
-        result.status = TestCaseResult.UNKNOWN_ERROR
-        print "Serious Error While Judging Solution Location - 2!!"
-      result.save()
+            #Removing Whitespace from the output before comparing
+            output = str(output).translate(None, string.whitespace)
+            if output == result.test_case.output_data:
+              result.status = TestCaseResult.ACCEPTED
+              score_earned += result.test_case.points
+            else:
+              result.status = TestCaseResult.WRONG_ANS
+        except ProcessTimeOutException:
+          result.status = TestCaseResult.TIME_LIMIT_EXCEEDED
+        except Exception:
+          result.status = TestCaseResult.UNKNOWN_ERROR
+          print "Serious Error While Judging Solution Location - 2!!"
+        result.save()
+      elif result.status == TestCaseResult.ACCEPTED:
+        score_earned += result.test_case.points
 
     #Checking the total score earned
     solution.score_earned = score_earned
     if score_earned < total_score:
-      solution.status = Solution.PRE_TEST_FAILED
+      if is_system_test is False:
+        solution.status = Solution.PRE_TEST_FAILED
+      else:
+        solution.status = Solution.SYS_TEST_FAILED
     else:
-      solution.status = Solution.PRE_TEST_PASSED
+      if is_system_test is False:
+        solution.status = Solution.PRE_TEST_PASSED
+      else:
+        solution.status = Solution.SYS_TEST_PASSED
     solution.save()
 
     #Checking if we need to update participant Score
@@ -180,6 +189,8 @@ def judge_challenge(challenge_id):
     challenge.solution.participant.chal_score_lost += 50
     challenge.solution.participant.org_score -= 50
     challenge.solution.participant.save()
+    challenge.solution.is_hacked = True
+    challenge.solution.save()
     challenge.challenger.chal_score_earned += 50
     challenge.challenger.org_score += 50
   else:

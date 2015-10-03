@@ -46,5 +46,34 @@
           </div>
         </div>
       {% endfor %}
+      {% for challenge in challenge_list %}
+        <div class="col s12 m12 l12">
+          <div class="card hoverable center">
+            <div class="card-content">
+              <div class="row valign-wrapper">
+                <div class="col s12 m4 l4">
+                  <span class="card-title activator blue-text text-darken-4"> Hack {{challenge.solution.problem.name}} </span>
+                </div>
+                <div class="col s12 m4 l4">
+                  <b>Status :</b>
+                  {% if challenge.status == challenge.WAITING %}
+                    <span class="grey-text text-darken-2">Awaiting Result</span>
+                  {% elif challenge.status == challenge.INVALID_INPUT %}
+                    <span class="red-text">Invalid Input</span>
+                  {% elif challenge.status == challenge.SUCCESSFUL %}
+                    <span class="green-text">Successful</span>
+                  {% elif challenge.status == challenge.FAILED %}
+                    <span class="red-text">Failed</span>
+                  {% endif %} <br/>
+                  <b>Time :</b> {{challenge.submit_time|localtime}}
+                </div>
+                <div class="col s12 m4 l4">
+                  <a href="/challenge/{{challenge.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 {% endblock content %}

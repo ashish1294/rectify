@@ -130,7 +130,7 @@ def solve(request, problem_id):
           result = TestCaseResult(solution = solution, test_case = pre_test)
           result.save()
       #Pass the solution to celery workers
-      judge_solution_easy_cases.delay(solution.id)
+      judge_solution_easy_cases.delay(solution.id, False)
       return HttpResponseRedirect('/solution/' + str(solution.id))
 
     #Update the context because form will be displayed in coding phase
@@ -151,7 +151,10 @@ def solution(request, solution_id):
 def my_submissions(request):
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
-  context = {'solution_list' : request.user.participant.solutions.all()}
+  context = {
+    'solution_list' : request.user.participant.solutions.all(),
+    'challenge_list' : request.user.participant.challenges.all(),
+  }
   return render(request, 'mysubmissions.html', context)
 
 def leaderboard(request):
@@ -162,6 +165,9 @@ def leaderboard(request):
   return render(request, 'leaderboard.html', context)
 
 def hack_solutions(request):
+  if request.user.is_authenticated() is False:
+    return HttpResponseRedirect('/')
+
   meta = Metadata.get_meta_data()
   context = { 'meta' :  meta, 'phase' : meta.phase}
 
@@ -218,3 +224,14 @@ def hack_solutions(request):
 
   context.update(csrf(request))
   return render(request, 'hack_solutions.html', context)
+
+def view_challenge(request, challenge_id):
+  if request.user.is_authenticated() is False:
+    return HttpResponseRedirect('/')
+  context = {}
+  try:
+    context['challenge'] = request.user.participant.challenges.get(
+      id = int(challenge_id))
+  except Challenge.DoesNotExist, ValueError:
+    pass
+  return render(request, 'view_challenge', context)
