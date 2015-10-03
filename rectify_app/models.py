@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-import datetime
+import datetime, string
 # Create your models here.
 
 class Metadata(models.Model):
@@ -72,6 +72,7 @@ class Problem(models.Model):
   problem_text = models.TextField()
   code = models.TextField(default = '')
   correct_code = models.TextField(default = '')
+  time_limit = models.IntegerField(default = 3)
 
   @property
   def max_points(self):
@@ -85,10 +86,13 @@ class TestCases(models.Model):
   input_data = models.TextField() # The input that will be given in Test Case
   output_data = models.TextField() # The Expected Output of the Test Case
   points = models.IntegerField() # The score that will be added for this case
-  time_limit = models.IntegerField() # In Seconds
   is_system_test = models.BooleanField(default = False)
 
   '''ToDo - Impose Memory Limit'''
+
+  def save(self, *args, **kwargs):
+    self.output_data = str(self.output_data).translate(None, string.whitespace)
+    super(TestCases, self).save(*args, **kwargs)
 
 class Solution(models.Model):
   PROCESSING = 'pr'
@@ -134,6 +138,7 @@ class TestCaseResult(models.Model):
 
 class Challenge(models.Model):
   WAITING = 'wt'
+  INVALID_INPUT = 'inv'
   SUCCESSFUL = 'succ'
   FAILED = 'fail'
 
