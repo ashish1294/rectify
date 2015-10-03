@@ -142,10 +142,8 @@ def solution(request, solution_id):
     return HttpResponseRedirect('/')
   context = {}
   try:
-    context['solution'] = Solution.objects.get(
-      id = int(solution_id),
-      participant = request.user.participant,
-    )
+    context['solution'] = request.user.participant.solutions.get(
+      id = int(solution_id))
   except Solution.DoesNotExist, ValueError:
     pass
   return render(request, 'solution_view.html', context)
@@ -171,6 +169,7 @@ def hack_solutions(request):
     if request.method == 'POST':
       form = HackingRequestForm(request.POST, prefix = 'fetch_sol')
       if form.is_valid():
+        # User has chosen Participant and Problem
         p_id = int(form.cleaned_data['participant'])
         if p_id != request.user.participant.id:
           solution_list = Solution.objects.filter(
@@ -178,6 +177,7 @@ def hack_solutions(request):
             problem__id = int(form.cleaned_data['problem']),
             status = Solution.PRE_TEST_PASSED,
           ).order_by('-submit_time')[:1]
+
           if len(solution_list) is not 1:
             form.add_error(
               field = None,
@@ -189,14 +189,26 @@ def hack_solutions(request):
               error = forms.ValidationError('This solution has already been hacked. Try Another One !!')
             )
           else:
-            context['solution'] = solution_list[0]
+            #A Hackable Solution is Found
+            if 'input_data' in form.cleaned_data:
+              #User Has Submitted a Hack
+              challenge = Challenge(
+                challenger = request.user.participant,
+                solution = solution_list[0],
+                input_data = form.cleaned_data['input_data']
+              )
+              challenge.save()
+              judge_challenge.delay(challenge.id)
+              return HttpResponseRedirect('/challenge/' + str(challenge_id))
+            else:
+              context['solution'] = solution_list[0]
         else:
           #User is trying to hack his/her own solution
           form.add_error(field = None, error = forms.ValidationError('You cannot hack your own solution :('))
       else:
         form.add_error(field = None, error = forms.ValidationError('Invalid Input in Form !'))
     else:
-      #Form is required only in Hacking Phase
+      #Simple Get Request. Send an empty form
       form = HackingRequestForm(prefix = 'fetch_sol')
     context['form'] = form
   elif meta.phase < meta.HACKING_PHASE:

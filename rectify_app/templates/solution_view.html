@@ -37,7 +37,7 @@
             {% elif solution.status == solution.COMPILE_ERROR %}
               <span class="yellow-text text-darken-3">Compilation Error</span> <br/>
               <b>Error Message : </b> <br/>
-              <p>{{solution.compile_throw}}</p>
+              <p><pre><code>{{solution.compile_throw}}</code></pre></p>
             {% elif solution.status == solution.PRE_TEST_FAILED %}
               <span class="red-text">Pre Tests Failed</span>
             {% elif solution.status == solution.PRE_TEST_PASSED %}
@@ -75,11 +75,13 @@
                       <td>
                         {% if res.status == res.WAITING %}
                           <span class="grey-text text-darken-2">Waiting</span>
+                        {% elif res.status == res.COMPILE_ERROR %}
+                          <span class="yellow-text text-darken-4">Compile Error</span>
                         {% elif res.status == res.ACCEPTED %}
                           <span class="green-text">Accepted</span>
                         {% elif res.status == res.WRONG_ANS %}
                           <span class="red-text">Wrong Answer</span>
-                        {% elif res.status == res.RUN_TIME_ERROR %}
+                        {% elif res.status == res.RUNTIME_ERROR %}
                           <span class="red-text">Run Time Error</span>
                         {% elif res.status == res.TIME_LIMIT_EXCEEDED %}
                           <span class="yellow-text text-darken-4">Time Limit Exceeded</span>

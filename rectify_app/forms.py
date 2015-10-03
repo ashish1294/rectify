@@ -116,6 +116,11 @@ class HackingRequestForm(forms.Form):
     required = True,
     label = "Problem",
   )
+  input_data = forms.CharField(
+    required = False,
+    label = "Input Data",
+    widget = forms.Textarea(attrs = {'class' : 'materialize-textarea'})
+  )
 
   def __init__(self, *args, **kwargs):
     super(HackingRequestForm, self).__init__(*args, **kwargs)

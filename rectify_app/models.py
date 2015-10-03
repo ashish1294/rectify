@@ -62,6 +62,7 @@ class Participant(models.Model):
   college = models.CharField(max_length = 300)
   contact = models.BigIntegerField()
   org_score = models.IntegerField(default = 0)
+  main_score = models.IntegerField(default = 0)
   chal_score_earned = models.IntegerField(default = 0)
   chal_score_lost = models.IntegerField(default = 0)
   total_score = models.IntegerField(default = 0)
@@ -114,6 +115,7 @@ class Solution(models.Model):
 
 class TestCaseResult(models.Model):
   WAITING = 'wt'
+  COMPILE_ERROR = 'ce'
   ACCEPTED = 'ac'
   WRONG_ANS = 'wa'
   RUNTIME_ERROR = 're'

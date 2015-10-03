@@ -1,4 +1,5 @@
 {% extends "dashboard.html" %}
+{% load staticfiles %}
 {% block title %}Hack Solution{% endblock title %}
 {% block content %}
   <br/> <br/>
@@ -31,25 +32,47 @@
         </div>
       </div>
     {% endif %}
-      <form action="" method="POST" id="fetch_solution_form">
-        {% csrf_token %}
-        <div class="row">
-          <div class="col s12 m6 l4 input-field">
-            {{form.participant}}
-            <label for="{{form.participant.id_for_label}}">Participant</label>
-          </div>
-          <div class="col s12 m6 l4 input-field">
-            {{form.problem}}
-            <label for="{{form.problem.if_for_label}}">Problem</label>
-          </div>
-          <div class="col s12 m12 l4 center input-field">
-            <button id="submit_details" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable center">Fetch Solution</button>
-          </div>
+    <form action="" method="POST" id="fetch_solution_form">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col s12 m6 l6 input-field">
+          {{form.participant}}
+          <label for="{{form.participant.id_for_label}}">Participant</label>
         </div>
-      </form>
-      <script type="text/javascript">
-        $('#submit_details').click(function (){ $('form#fetch_solution_form').submit();});
-        $(document).ready(function() { $('select').material_select();});
-      </script>
+        <div class="col s12 m6 l6 input-field">
+          {{form.problem}}
+          <label for="{{form.problem.if_for_label}}">Problem</label>
+        </div>
+        {% if solution %}
+          <div class="col s12 m12 l12">
+            <div class="card hoverable">
+              <div class="card-content">
+                <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+                <pre><code class="cpp">{{solution.code}}</code></pre>
+                <br />
+                <div class="row">
+                  <div class="input-field col s12 m12 l12">
+                    {{form.input_data}}
+                    <label for="{{form.input_data.id_for_label}}">Input Data</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        <div class="col s12 m12 l12 center input-field">
+          <button class="btn waves-effect waves-light btn-large blue lighten-3" type="submit" name="action">Fetch Solution
+              <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+    </form>
+    {% if solution %}
+      <script src="{% static 'js/highlight.pack.js' %}"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+    {% endif %}
+    <script type="text/javascript">
+      $(document).ready(function() { $('select').material_select();});
+    </script>
   {% endif %}
 {% endblock content %}
