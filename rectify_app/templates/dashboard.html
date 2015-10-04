@@ -44,35 +44,39 @@
     </style>
   </head>
   <body>
-    <main>
+    <header>
       <ul id="user_dropdown" class="dropdown-content">
         <li><a href="/signout">Log Out</a></li>
       </ul>
-      <nav>
-        <div class="nav-wrapper blue">
-          <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-          <a class="brand-logo" href="#" style="padding-left: 20px;">Rectify 2015</a>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a href="/dashboard">Dashboard</a></li>
-              <li><a href="/problem_list">Problems</a></li>
-              <li><a href="/leaderboard">Leaderboard</a></li>
-              <li><a href="/challenge">Hack</a></li>
-              <li><a href="/mysubmissions">My Submission</a></li>
-              <li><a class="dropdown-button" href="#!" data-activates="user_dropdown"> Welcome {{request.user.participant.name}} <i class="material-icons right">arrow_drop_down</i></a></li>
-            </ul>
-            <ul id="slide-out" class="side-nav">
-              <p class="blue-text text-darken-2" style="padding-left: 20px;">Welcome {{request.user.participant.name}} </p>
-              <li><a href="/dashboard">Dashboard</a></li>
-              <li><a href="/problem_list">Problems</a></li>
-              <li><a href="/leaderboard">Leaderboard</a></li>
-              <li><a href="/challenge">Hack</a></li>
-              <li><a href="/mysubmissions">My Submission</a></li>
-              <li><a href="/signout">Log Out</a></li>
-            </ul>
+      <nav class="blue">
+        <div class="container" style="width:85%;">
+          <div class="nav-wrapper">
+            <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <a class="brand-logo" href="#">Rectify 2015</a>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/problem_list">Problems</a></li>
+                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li><a href="/challenge">Hack</a></li>
+                <li><a href="/mysubmissions">My Submission</a></li>
+                <li><a class="dropdown-button" href="#!" data-activates="user_dropdown"> Welcome {{request.user.participant.name}} <i class="material-icons right">arrow_drop_down</i></a></li>
+              </ul>
+              <ul id="slide-out" class="side-nav">
+                <p class="blue-text text-darken-2" style="padding-left: 20px;">Welcome {{request.user.participant.name}} </p>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/problem_list">Problems</a></li>
+                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li><a href="/challenge">Hack</a></li>
+                <li><a href="/mysubmissions">My Submission</a></li>
+                <li><a href="/signout">Log Out</a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </nav>
+    </header>
+    <main>
       <div class="container">
         {% block content %}
           <div class="row">

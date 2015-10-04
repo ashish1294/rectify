@@ -194,7 +194,7 @@ def hack_solutions(request):
               field = None,
               error = forms.ValidationError('This participant has not submitted any code for this problem')
             )
-          elif solution_list[0].is_hacked == True:
+          elif solution_list[0].is_hacked is True:
             form.add_error(
               field = None,
               error = forms.ValidationError('This solution has already been hacked. Try Another One !!')

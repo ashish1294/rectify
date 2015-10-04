@@ -135,8 +135,10 @@ class Solution(models.Model):
   compile_throw = models.TextField(default = '')
   status = models.CharField(max_length = 10, default = PROCESSING)
   submit_time = models.DateTimeField(auto_now_add = True)
-  hackers = models.ManyToManyField(Participant, through = 'Challenge')
-  is_hacked = models.BooleanField(default = False)
+
+  @property
+  def is_hacked(self):
+    return hasattr(self, 'challenge')
 
 class TestCaseResult(models.Model):
   WAITING = 'wt'
@@ -167,9 +169,9 @@ class Challenge(models.Model):
     on_delete = models.CASCADE,
     related_name = 'challenges_posted'
   )
-  solution = models.ForeignKey(Solution,
+  solution = models.OneToOneField(Solution,
     on_delete = models.CASCADE,
-    related_name = 'challenges'
+    related_name = 'challenge'
   )
   input_data = models.TextField()
   status = models.CharField(max_length = 10, default = WAITING)

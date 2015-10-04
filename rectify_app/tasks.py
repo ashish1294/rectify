@@ -198,8 +198,6 @@ def judge_challenge(challenge_id):
     challenge.solution.participant.chal_score_lost += 50
     challenge.solution.participant.org_score -= 50
     challenge.solution.participant.save()
-    challenge.solution.is_hacked = True
-    challenge.solution.save()
     challenge.challenger.chal_score_earned += 50
     challenge.challenger.org_score += 50
   else:

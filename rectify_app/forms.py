@@ -5,9 +5,8 @@ class ParticipantRegistrationForm(forms.Form):
   name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. Animesh Gupta',
       'autofocus' : 'autofocus'
     }),
     max_length = 200
@@ -15,56 +14,46 @@ class ParticipantRegistrationForm(forms.Form):
   user_name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. dark_master'
     }),
     max_length = 200,
-    label = "User Name"
   )
   email = forms.EmailField(
     required = True,
     widget = forms.EmailInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. dark123@gmail.com'
     }),
-    label = "Email Id"
   )
   college = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. NITK Surathkal'
     }),
     max_length = 300,
-    label = "Institution"
   )
   contact = forms.IntegerField(
     required = True,
     widget = forms.NumberInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. 9965309653'
     }),
-    label = "Phone Number"
   )
   password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required'
     }),
-    label = "Password"
   )
   con_password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
     }),
-    label = "Confirm Password"
   )
 
   def clean(self):
@@ -89,9 +78,7 @@ class SignInForm(forms.Form):
   user_name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
-      'placeholder' : 'User Name',
-      'autofocus' : 'autofocus',
+      'class' : 'validate',
       'required' : 'required',
     }),
     max_length = 200,
@@ -100,8 +87,7 @@ class SignInForm(forms.Form):
   password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
-      'placeholder' : 'Password',
+      'class' : 'validate',
       'required' : 'required',
     }),
     label = "Password"

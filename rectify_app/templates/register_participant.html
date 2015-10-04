@@ -7,65 +7,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rectify, Engineer, NITK Surathkal">
     <meta name="author" content="Ashish Kedia, 12IT14">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="{% static 'images/favicon.png'%}">
 
     <title>Rectify - Engineer 2015 | Participant Registration</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
     <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/materialize.min.js' %}"></script>
     <style type="text/css">
-      form{
-        margin : 50px auto;
-        max-width: 300px;
+      form {
+        margin: 2em auto;
+        padding: 2em 2em 2em 2em;
+        background: #fafafa;
+        border: 1px solid #ebebeb;
+        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
       }
-      .form_table{
-          margin-top: 10px;
-          margin-bottom: 10px;
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        background : #eee;
       }
-      .form_table tbody tr th{
-        padding-top: 10px;
-        padding-bottom: 10px;
-        padding-left: 10px
+      main {
+        flex: 1 0 auto;
       }
-      .heading {
-        margin: 50px auto;
-        text-align: center;
+      .engi_logo_image {
+        display : inline-block;
+        height : 150px;
+        position : absolute;
       }
-      .errorlist {
-        list-style: none;
-        padding-left: 0px;
-        margin-bottom: 0px;
-        color : red;
+      .img_rot{
+        -webkit-animation:spin 8s linear infinite;
+        -moz-animation:spin 8s linear infinite;
+        animation:spin 8s linear infinite;
       }
+      @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+      @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+      @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
     </style>
-    <!--<link href="{% static 'css/signin.css' %}" rel="stylesheet">-->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
   <body>
-    <div class="container">
-      <h1 class="heading">Rectify - Participant Registration</h1>
-      <form action="/register_participant" method="POST">
-        {% csrf_token %}
-        <table class="form_table">
-          {{form.as_table}}
-          <tr>
-            <td colspan="2"><input type="submit" class="btn btn-lg btn-primary btn-block" value="Register"/></td>
-          </tr>
-        </table>
-      </form>
-      <!--<form class="form-signin">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputEmail" class="sr-only">Team Name</label>
-        <input type="text" id="inputEmail" class="form-control" placeholder="Team name" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      </form>-->
-    </div>
+    <header>
+      <nav class="blue">
+        <div class="container" style="width:85%;">
+          <div class="nav-wrapper">
+            <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <a class="brand-logo" href="#">Rectify 2015</a>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/">Login</a></li>
+                <li><a href="http://engineer.org.in/">Engineer 2015</a></li>
+              </ul>
+              <ul id="slide-out" class="side-nav">
+                <li><a href="/">Login</a></li>
+                <li><a href="http://engineer.org.in/">Engineer 2015</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="container">
+        <h1 class="center">Rectify Registration</h1>
+        {% if form.non_field_errors %}
+          <script type="text/javascript">
+            $(document).ready(function(){
+              Materialize.toast('There was an error while registering !!', 4000);
+            });
+          </script>
+          <div class="row center">
+            <div class="col l12 m12 s12">
+              <i class="medium material-icons red-text">error</i>
+            </div>
+            <div class="col s12 m12 l12">
+              <div class="card-panel hoverable red-text">
+                {{form.non_field_errors}}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        <form action="/register_participant" method="POST" class="hoverable">
+          {% csrf_token %}
+          <div class="row" style="margin-bottom: 0px;">
+            <div class="input-field col s12 m12 l12">
+              {{form.name}} <label for="{{form.name.id_for_label}}">Name</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.user_name}} <label for="{{form.user_name.id_for_label}}">User Name</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.email}} <label for="{{form.email.id_for_label}}">Email</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.college}} <label for="{{form..id_for_label}}">Institution</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.contact}} <label for="{{form.contact.id_for_label}}">Contact Number</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.password}} <label for="{{form.password.id_for_label}}">Password</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+              {{form.con_password}} <label for="{{form..id_for_label}}">Re-type Password</label>
+            </div>
+            <div class="center">
+              <br/>
+              <button class="btn waves-effect waves-light blue btn-large" type="submit" name="action">Submit <i class="material-icons right">cloud</i> </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+    <footer class="page-footer blue">
+      <div class="container">
+        <div class="row">
+          <div class="col l8 s12 m12">
+            <h5 class="white-text">Rectify @ Engineer 2015</h5>
+            <p class="grey-text text-lighten-4">This Application was developed for Rectify event of Engineer 2015</p>
+            <br/></br>
+          </div>
+          <div class="col l4 m12 s12 center">
+            <div style="min-height : 150px;" class="center">
+              <img src="{% static 'images/17.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+              <img src="{% static 'images/ER.png' %}" alt="Engineer Logo Background" class="engi_logo_image img_rot"/>
+              <img src="{% static 'images/circle_12.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+        © 2015, Comps Committee, Engineer 2015
+        <a class="grey-text text-lighten-4 right" href="http://engineer.org.in/">Engineer, NITK Surathkal</a>
+        </div>
+      </div>
+    </footer>
   </body>
+  <script type="text/javascript">
+    $(".button-collapse").sideNav();
+  </script>
 </html>

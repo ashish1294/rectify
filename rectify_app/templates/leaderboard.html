@@ -14,7 +14,10 @@
           <tr>
             <th datafield="rank">Rank</th>
             <th data-field="participant">Participant</th>
-            <th data-field="score">Score</th>
+            <th data-field="main-score">Main</th>
+            <th data-field="hacks">Hacks</th>
+            <th data-field="against">Against</th>
+            <th data-field="final-score">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +25,9 @@
             <tr>
               <td>{{forloop.counter}}</td>
               <td>{{participant.name}}</td>
+              <td class="green">{{participant.main_score}}</td>
+              <td class="{% if participant.chal_score_earned < 0 %}red {% else %} green {% endif %}" >{{participant.chal_score_earned}}</td>
+              <td class="red">{{participant.chal_score_lost}}</td>
               <td>{{participant.org_score}}</td>
             </tr>
           {% endfor %}
