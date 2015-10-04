@@ -128,6 +128,17 @@ def solve(request, problem_id):
           code = request.POST['code'],
         )
         solution.save()
+
+        ''' Special Note for future developers :
+          All the TestCaseResult objects should be created in the HTTP request
+          response cycle. The TestCaseResult in later updated with appropriate
+          status and result in the background job (using celery). This is
+          because user will be immediately redirected to the solution view page
+          after the successful submission of task to background task broker and
+          when user lands on solution view page, the TestCaseResult objects must
+          exist !!
+        '''
+
         pre_test_list = solution.problem.test_cases.filter(
           is_system_test = False)
         for pre_test in pre_test_list:
@@ -203,6 +214,11 @@ def hack_solutions(request):
             #A Hackable Solution is Found
             if 'input_data' in request.POST:
               #User Has Submitted a Hack
+              ''' Note for future developers:
+                Read the note on solve function to understand why challenge
+                object should be created in HTTP cycle and not as a part of
+                background task.
+              '''
               challenge = Challenge(
                 challenger = request.user.participant,
                 solution = solution_list[0],

@@ -5,15 +5,38 @@ import time, string, random, signal, os, subprocess
 from django.db import transaction, IntegrityError
 from django.db.models import Max
 
+'''
+  This file contains the background jobs that will be executed separately from
+  the HTTP Request - Response Cycle. Judging Solutions might take some time and
+  we cannot expect user to wait for the HttpResponse that long.
+'''
+
 # Custom Exception for simulating Timeout
 class ProcessTimeOutException(Exception):
+  ''' Note to future developers:
+    This Exception is created to simulate the timeout period for the running of
+    solution. Given the time I (Ashish Kedia) had to develop this application I
+    could not find a better solution for implementing a timeout mechanism for
+    subprocesses that will execute the user's submitted code.
+
+    This method uses the SIGALRM signal on Unix platforms which raises an ALARM
+    signal after a given period of time. So just before executing user's code we
+    set the alarm period. If the alarm is triggered the raise_timeout_exception
+    function is called which in turn raises this exception. This exception can
+    then be easily caught to determine if TIME LIMIT EXCEEDED Error has occurred
+  '''
   pass
 
 def raise_timeout_exception(signum, frame):
   raise ProcessTimeOutException('Process Has Timed Out')
 
 @shared_task
-def judge_solution_easy_cases(solution_id, is_system_test):
+def judge_solution_easy_cases(solution_id, is_system_test = False):
+  '''
+    This background task accepts two parameters - solution_id and is_system_test
+    is_system_test ensures that this same task can be used for both normal
+    pre test and system test which will be run at the end of the contest.
+  '''
   solution = Solution.objects.get(id = solution_id)
   result_list = solution.test_case_results.all()
 
@@ -92,7 +115,8 @@ def judge_solution_easy_cases(solution_id, is_system_test):
         solution.status = Solution.SYS_TEST_PASSED
     solution.save()
 
-    #Checking if we need to update participant Score
+    # Checking if we need to update participant Score
+    # User might have already solved this problem before !!
     if score_earned > max_score:
       solution.participant.main_score += score_earned - max_score
       solution.participant.org_score += score_earned - max_score
@@ -195,6 +219,8 @@ def judge_challenge(challenge_id):
   os.remove(file_name)
   os.remove(full_file_name)
 
+  # Updating objects based on the result
+  # Change these contests if you want to change the score for challenge
   if challenge.status == Challenge.SUCCESSFUL:
     challenge.solution.participant.chal_score_lost += 50
     challenge.solution.participant.org_score -= 50
