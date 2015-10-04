@@ -116,13 +116,14 @@ def judge_solution_easy_cases(solution_id, is_system_test):
   os.remove(file_name)
   os.remove(full_file_name)
 
+@shared_task
 def judge_challenge(challenge_id):
   print "Juding Challenge id ", challenge_id
   challenge = Challenge.objects.get(id = challenge_id)
 
   # Generating a random file name for problem setter's source code
   file_name_ps = ''.join(random.choice(string.ascii_uppercase) for i in range(6))
-  full_file_name_ps = file_name + '.cpp'
+  full_file_name_ps = file_name_ps + '.cpp'
 
   fp = open(full_file_name_ps, 'w+')
   fp.write(challenge.solution.problem.correct_code)

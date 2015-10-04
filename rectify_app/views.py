@@ -178,7 +178,7 @@ def hack_solutions(request):
 
   if meta.phase == meta.HACKING_PHASE:
     if request.method == 'POST':
-      form = HackingRequestForm(request.POST, prefix = 'fetch_sol')
+      form = HackingRequestForm(request.POST)
       if form.is_valid():
         # User has chosen Participant and Problem
         p_id = int(form.cleaned_data['participant'])
@@ -201,7 +201,7 @@ def hack_solutions(request):
             )
           else:
             #A Hackable Solution is Found
-            if 'input_data' in form.cleaned_data:
+            if 'input_data' in request.POST:
               #User Has Submitted a Hack
               challenge = Challenge(
                 challenger = request.user.participant,
@@ -210,7 +210,7 @@ def hack_solutions(request):
               )
               challenge.save()
               judge_challenge.delay(challenge.id)
-              return HttpResponseRedirect('/view_challenge/' + str(challenge_id))
+              return HttpResponseRedirect('/view_challenge/' + str(challenge.id))
             else:
               context['solution'] = solution_list[0]
         else:
@@ -220,7 +220,7 @@ def hack_solutions(request):
         form.add_error(field = None, error = forms.ValidationError('Invalid Input in Form !'))
     else:
       #Simple Get Request. Send an empty form
-      form = HackingRequestForm(prefix = 'fetch_sol')
+      form = HackingRequestForm()
     context['form'] = form
   elif meta.phase < meta.HACKING_PHASE:
     context['error'] = 'Hacking phase has not started yet !!'

@@ -1,7 +1,9 @@
 {% extends "dashboard.html" %}
 {% load staticfiles %}
+{% load tz %}
 {% block title %}Hack Solution{% endblock title %}
 {% block content %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
   <br/> <br/>
   {% if phase != meta.HACKING_PHASE %}
     <script type="text/javascript">
@@ -48,6 +50,7 @@
             <div class="card hoverable">
               <div class="card-content">
                 <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+                <br/ ><b>Submit Time : </b> {{solution.submit_time | localtime}} <br/>
                 <pre><code class="cpp">{{solution.code}}</code></pre>
                 <br />
                 <div class="row">
@@ -61,7 +64,7 @@
           </div>
         {% endif %}
         <div class="col s12 m12 l12 center input-field">
-          <button class="btn waves-effect waves-light btn-large blue lighten-3" type="submit" name="action">
+          <button class="btn waves-effect waves-light btn-large blue" type="submit" name="action">
               {% if solution %}
                 Submit Hack
               {% else %}

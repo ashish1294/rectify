@@ -24,9 +24,9 @@
     <div class="card hoverable">
       <div class="card-content">
         <span class="card-title activator blue-text text-darken-4">Hack Information</span> <br/>
-        <p><b>Sumit Time : </b> {{challenge.submit_time|localtime}} </p>
-        <p><b>Against : </b> {{challenge.solution.participant.name}}</p>
-        <p><b>Problem : </b><a href="/solve/{{challenge.solution.problem.id}}">{{challenge.solution.problem.name}}</a></p>
+        <p><b>Sumit Time : </b> {{challenge.submit_time|localtime}} </p> <br/>
+        <p><b>Against : </b> {{challenge.solution.participant.name}}</p> <br/>
+        <p><b>Problem : </b><a href="/solve/{{challenge.solution.problem.id}}">{{challenge.solution.problem.name}}</a></p> <br/>
         <p><b>Status : </b>
           {% if challenge.status == challenge.WAITING %}
             <span class="grey-text text-darken-2">Awaiting Result</span>
@@ -37,8 +37,8 @@
           {% elif challenge.status == challenge.FAILED %}
             <span class="red-text">Failed</span>
           {% endif %}
-        </p>
-        <p><b>Input Data :</b> <br/>{{challenge.input_data}}</p>
+        </p> <br/>
+        <p><b>Input Data :</b> <br/>{{challenge.input_data}}</p> <br/>
       </div>
     </div>
   {% endif %}

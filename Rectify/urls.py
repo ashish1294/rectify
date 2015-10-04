@@ -29,5 +29,5 @@ urlpatterns = [
     url(r'^mysubmissions/?$', my_submissions),
     url(r'^leaderboard/?$', leaderboard),
     url(r'^challenge/?$', hack_solutions),
-    url(r'^view_challenge/?$', view_challenge)
+    url(r'^view_challenge/(\d+)/?$', view_challenge)
 ]

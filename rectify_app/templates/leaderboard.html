@@ -25,9 +25,9 @@
             <tr>
               <td>{{forloop.counter}}</td>
               <td>{{participant.name}}</td>
-              <td class="green">{{participant.main_score}}</td>
-              <td class="{% if participant.chal_score_earned < 0 %}red {% else %} green {% endif %}" >{{participant.chal_score_earned}}</td>
-              <td class="red">{{participant.chal_score_lost}}</td>
+              <td class="green-text">{{participant.main_score}}</td>
+              <td class="{% if participant.chal_score_earned < 0 %}red-text {% else %} green-text {% endif %}" >{{participant.chal_score_earned}}</td>
+              <td class="red-text">{{participant.chal_score_lost}}</td>
               <td>{{participant.org_score}}</td>
             </tr>
           {% endfor %}

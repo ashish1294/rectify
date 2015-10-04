@@ -53,6 +53,9 @@ class Metadata(models.Model):
 class Announcements(models.Model):
   text = models.TextField()
 
+  def __str__(self):
+    return str(self.text[:10])
+
 class Participant(models.Model):
   user = models.OneToOneField(User,
     on_delete = models.CASCADE,
@@ -66,6 +69,9 @@ class Participant(models.Model):
   chal_score_earned = models.IntegerField(default = 0)
   chal_score_lost = models.IntegerField(default = 0)
   total_score = models.IntegerField(default = 0)
+
+  def __str__(self):
+    return str(self.name)
 
   @property
   def rank(self):
@@ -101,6 +107,9 @@ class Problem(models.Model):
     for case in self.test_cases.all():
       points += case.points
     return points
+
+  def __str__(self):
+    return str(self.name)
 
 class TestCases(models.Model):
   problem = models.ForeignKey(Problem, related_name = 'test_cases')
@@ -139,6 +148,9 @@ class Solution(models.Model):
   @property
   def is_hacked(self):
     return hasattr(self, 'challenge')
+
+  def __str__(self):
+    return str(self.problem) + str(self.participant)
 
 class TestCaseResult(models.Model):
   WAITING = 'wt'
