@@ -67,6 +67,27 @@ class Participant(models.Model):
   chal_score_lost = models.IntegerField(default = 0)
   total_score = models.IntegerField(default = 0)
 
+  @property
+  def rank(self):
+    query_set = Participant.objects.filter(org_score__gt = self.org_score)
+    return query_set.aggregate(rank = models.Count('org_score'))['rank'] + 1
+
+  @property
+  def pretest_solved(self):
+    return self.solutions.filter(status = Solution.PRE_TEST_PASSED).aggregate(
+      co = models.Count('problem', distinct = True)
+    )['co']
+
+  @property
+  def systest_solved(self):
+    return self.solutions.filter(status = Solution.SYS_TEST_PASSED).aggregate(
+      co = models.Count('problem', distinct = True)
+    )['co']
+
+  @property
+  def no_of_successful_hack(self):
+    return len(self.challenges_posted.filter(status = Challenge.SUCCESSFUL))
+
 class Problem(models.Model):
   name = models.CharField(max_length = 100)
   problem_text = models.TextField()

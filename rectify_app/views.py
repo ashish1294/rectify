@@ -81,7 +81,11 @@ def dashboard(request):
     return HttpResponseRedirect('/')
   meta = Metadata.get_meta_data()
   anl = Announcements.objects.all()
-  context = { 'meta' : meta, 'phase' : meta.phase, 'announcement_list' : anl }
+  context = {
+    'meta' : meta,
+    'phase' : meta.phase,
+    'announcement_list' : anl
+  }
   return render(request, 'dashboard.html', context)
 
 def problem_list(request):
@@ -91,6 +95,7 @@ def problem_list(request):
   context = {
     'meta' : meta,
     'phase' : meta.phase,
+    'problem_list' : Problem.objects.all(),
   }
   return render(request, 'problem_list.html', context)
 
@@ -153,7 +158,7 @@ def my_submissions(request):
     return HttpResponseRedirect('/')
   context = {
     'solution_list' : request.user.participant.solutions.all(),
-    'challenge_list' : request.user.participant.challenges.all(),
+    'challenge_list' : request.user.participant.challenges_posted.all(),
   }
   return render(request, 'mysubmissions.html', context)
 
@@ -205,7 +210,7 @@ def hack_solutions(request):
               )
               challenge.save()
               judge_challenge.delay(challenge.id)
-              return HttpResponseRedirect('/challenge/' + str(challenge_id))
+              return HttpResponseRedirect('/view_challenge/' + str(challenge_id))
             else:
               context['solution'] = solution_list[0]
         else:
@@ -230,8 +235,8 @@ def view_challenge(request, challenge_id):
     return HttpResponseRedirect('/')
   context = {}
   try:
-    context['challenge'] = request.user.participant.challenges.get(
+    context['challenge'] = request.user.participant.challenges_posted.get(
       id = int(challenge_id))
   except Challenge.DoesNotExist, ValueError:
     pass
-  return render(request, 'view_challenge', context)
+  return render(request, 'view_challenge.html', context)

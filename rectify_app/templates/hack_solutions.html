@@ -41,7 +41,7 @@
         </div>
         <div class="col s12 m6 l6 input-field">
           {{form.problem}}
-          <label for="{{form.problem.if_for_label}}">Problem</label>
+          <label for="{{form.problem.id_for_label}}">Problem</label>
         </div>
         {% if solution %}
           <div class="col s12 m12 l12">
@@ -61,7 +61,12 @@
           </div>
         {% endif %}
         <div class="col s12 m12 l12 center input-field">
-          <button class="btn waves-effect waves-light btn-large blue lighten-3" type="submit" name="action">Fetch Solution
+          <button class="btn waves-effect waves-light btn-large blue lighten-3" type="submit" name="action">
+              {% if solution %}
+                Submit Hack
+              {% else %}
+                Fetch Solution
+              {% endif %}
               <i class="material-icons right">send</i>
           </button>
         </div>

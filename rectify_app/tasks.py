@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from celery import shared_task
 from .models import *
-import time, string, random, signal, os
+import time, string, random, signal, os, subprocess
 from django.db import transaction, IntegrityError
 from django.db.models import Max
 
@@ -9,12 +9,11 @@ from django.db.models import Max
 class ProcessTimeOutException(Exception):
   pass
 
-def raise_timeout_exception():
-  raise ProcessTimeOutException
+def raise_timeout_exception(signum, frame):
+  raise ProcessTimeOutException('Process Has Timed Out')
 
 @shared_task
 def judge_solution_easy_cases(solution_id, is_system_test):
-  print "Juding Solution id ", solution_id
   solution = Solution.objects.get(id = solution_id)
   result_list = solution.test_case_results.all()
 
@@ -23,8 +22,9 @@ def judge_solution_easy_cases(solution_id, is_system_test):
   full_file_name = file_name + '.cpp'
 
   # Writing code to a file
-  fp = open(full_file_name)
+  fp = open(full_file_name, 'w+')
   fp.write(solution.code)
+  fp.flush()
   fp.close()
 
   #Compiling the file
@@ -54,7 +54,7 @@ def judge_solution_easy_cases(solution_id, is_system_test):
           # Creating a TimeOut. SIGALRM is passed after timelimit
           signal.signal(signal.SIGALRM, raise_timeout_exception)
           signal.alarm(solution.problem.time_limit + 1)
-          output = proc.communicate(stdin = result.test_case.input_data)[0]
+          output = proc.communicate(input = str(result.test_case.input_data))[0]
           signal.alarm(0)
           ret_code = proc.poll()
           if ret_code < 0 :
@@ -69,6 +69,7 @@ def judge_solution_easy_cases(solution_id, is_system_test):
             else:
               result.status = TestCaseResult.WRONG_ANS
         except ProcessTimeOutException:
+          print "Process Timeout"
           result.status = TestCaseResult.TIME_LIMIT_EXCEEDED
         except Exception:
           result.status = TestCaseResult.UNKNOWN_ERROR
@@ -111,7 +112,7 @@ def judge_solution_easy_cases(solution_id, is_system_test):
           result.status = TestCaseResult.COMPILE_ERROR
           result.save()
 
-  #Cleaning Up the temporary code files
+  # Cleaning Up the temporary code files
   os.remove(file_name)
   os.remove(full_file_name)
 
@@ -123,7 +124,7 @@ def judge_challenge(challenge_id):
   file_name_ps = ''.join(random.choice(string.ascii_uppercase) for i in range(6))
   full_file_name_ps = file_name + '.cpp'
 
-  fp = open(full_file_name_ps)
+  fp = open(full_file_name_ps, 'w+')
   fp.write(challenge.solution.problem.correct_code)
   fp.close()
 
@@ -141,7 +142,7 @@ def judge_challenge(challenge_id):
     # Creating a TimeOut. SIGALRM is passed after timelimit
     signal.signal(signal.SIGALRM, raise_timeout_exception)
     signal.alarm(challenge.solution.problem.time_limit + 1)
-    expected_output = proc.communicate(stdin = challenge.input_data)[0]
+    expected_output = proc.communicate(input = challenge.input_data)[0]
     signal.alarm(0)
     expected_output = str(expected_output).translate(None, string.whitespace)
     ret_code = proc.poll()
@@ -150,13 +151,17 @@ def judge_challenge(challenge_id):
   except ProcessTimeOutException:
     challenge.status = Challenge.INVALID_INPUT
 
+  #Cleaning Up
+  os.remove(full_file_name_ps)
+  os.remove(file_name_ps)
+
   if challenge.status != Challenge.INVALID_INPUT:
     # Generating a random file name for solution source code
     file_name = ''.join(random.choice(string.ascii_uppercase) for i in range(6))
     full_file_name = file_name + '.cpp'
 
     # Writing solution code to a file
-    fp = open(full_file_name)
+    fp = open(full_file_name, 'w+')
     fp.write(challenge.solution.code)
     fp.close()
 
@@ -174,7 +179,7 @@ def judge_challenge(challenge_id):
       # Creating a TimeOut. SIGALRM is passed after timelimit
       signal.signal(signal.SIGALRM, raise_timeout_exception)
       signal.alarm(challenge.solution.problem.time_limit + 1)
-      obtained_output = proc.communicate(stdin = challenge.input_data)[0]
+      obtained_output = proc.communicate(input = challenge.input_data)[0]
       signal.alarm(0)
       obtained_output = str(obtained_output).translate(None, string.whitespace)
       ret_code = proc.poll()
@@ -184,6 +189,10 @@ def judge_challenge(challenge_id):
         challenge.status = Challenge.SUCCESSFUL
     except ProcessTimeOutException:
       challenge.status = Challenge.SUCCESSFUL
+
+  # Cleaning Up
+  os.remove(file_name)
+  os.remove(full_file_name)
 
   if challenge.status == Challenge.SUCCESSFUL:
     challenge.solution.participant.chal_score_lost += 50

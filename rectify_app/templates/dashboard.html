@@ -112,11 +112,11 @@
               <div class="card hoverable">
                 <div class="card-content">
                   <span class="card-title activator blue-text text-darken-4">Your Performance<i class="material-icons right">more_vert</i></span>
-                  <p><b>Your Score :</b> {{request.user.participant.total_score}}</p>
-                  <p><b>Your Rank :</b> {{current_rank}} </p>
-                  <p><b>Problems with Pre-Test Solved :</b> {{pretest_solved}} </p>
-                  <p><b>Problems Fully Solved :</b> {{system_solved}}</p>
-                  <p><b>Solutions Hacked :</b> {{solution_hacked}} </p>
+                  <p><b>Your Score :</b> {{request.user.participant.org_score}}</p>
+                  <p><b>Your Rank :</b> {{request.user.participant.rank}} </p>
+                  <p><b>Problems with Pre-Test Solved :</b> {{request.user.participant.pretest_solved}} </p>
+                  <p><b>Problems Fully Solved :</b> {{request.user.participant.systest_solved}}</p>
+                  <p><b>Solutions Hacked :</b> {{request.user.participant.no_of_successful_hack}} </p>
                 </div>
                 <div class="card-reveal">
                   <span class="card-title blue-text text-darken-4">Your Performance<i class="material-icons right">close</i></span>

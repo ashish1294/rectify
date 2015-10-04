@@ -69,24 +69,24 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for result_row in solution.test_case_results.all %}
+                  {% for res in solution.test_case_results.all %}
                     <tr>
                       <td>{{forloop.counter}}</td>
                       <td>
                         {% if res.status == res.WAITING %}
-                          <span class="grey-text text-darken-2">Waiting</span>
+                          <span class="grey-text text-darken-2" style="font-size: 20px;">Waiting</span>
                         {% elif res.status == res.COMPILE_ERROR %}
-                          <span class="yellow-text text-darken-4">Compile Error</span>
+                          <span class="yellow-text text-darken-4" style="font-size: 20px;"><i class="material-icons tiny">warning</i> Compile Error</span>
                         {% elif res.status == res.ACCEPTED %}
-                          <span class="green-text">Accepted</span>
+                          <span class="green-text" style="font-size: 20px;"><i class="material-icons tiny">done</i> Accepted</span>
                         {% elif res.status == res.WRONG_ANS %}
-                          <span class="red-text">Wrong Answer</span>
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">highlight off</i> Wrong Answer</span>
                         {% elif res.status == res.RUNTIME_ERROR %}
-                          <span class="red-text">Run Time Error</span>
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">error_outline</i> Run Time Error</span>
                         {% elif res.status == res.TIME_LIMIT_EXCEEDED %}
-                          <span class="yellow-text text-darken-4">Time Limit Exceeded</span>
+                          <span class="yellow-text text-darken-4" style="font-size: 20px;"><i class="material-icons tiny">av_timer</i> Time Limit Exceeded</span>
                         {% elif res.status == res.UNKNOWN_ERROR %}
-                          <span class="red-text">Unknown Error</span>
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">error_outline</i> Unknown Error</span>
                         {% endif %}
                       </td>
                     </tr>

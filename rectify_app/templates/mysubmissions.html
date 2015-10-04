@@ -7,9 +7,8 @@
       <div class="col s12 m12 l12">
         <div class="card hoverable">
           <div class="card-content">
-            <span class="card-title activator blue-text text-darken-4">Statistics</span> <br/>
-            <b>Total Submissions : </b>{{solution_list|length}}
-            <b>Total Challenges : </b>{{challenge_list|length}}
+            <span class="card-title activator blue-text text-darken-4">Statistics</span> -&gt; &nbsp; &nbsp; <b>Total Solutions : </b>{{solution_list|length}}
+            &nbsp; &nbsp; <b>Total Challenges : </b>{{challenge_list|length}}
           </div>
         </div>
       </div>
@@ -17,7 +16,7 @@
         <div class="col s12 m12 l12">
           <div class="card hoverable center">
             <div class="card-content">
-              <div class="row valign-wrapper">
+              <div class="row" style="margin-bottom: 0px;">
                 <div class="col s12 m4 l4">
                   <span class="card-title activator blue-text text-darken-4"> {{solution.problem.name}} </span>
                 </div>
@@ -39,7 +38,7 @@
                   <b>Time :</b> {{solution.submit_time|localtime}}
                 </div>
                 <div class="col s12 m4 l4">
-                  <a href="/solution/{{solution.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View</a>
+                  <a href="/solution/{{solution.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View <i class="material-icons right">send</i></a>
                 </div>
               </div>
             </div>
@@ -68,7 +67,7 @@
                   <b>Time :</b> {{challenge.submit_time|localtime}}
                 </div>
                 <div class="col s12 m4 l4">
-                  <a href="/challenge/{{challenge.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View</a>
+                  <a href="/challenge/{{challenge.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View <i class="material-icons right">send</i></a>
                 </div>
               </div>
             </div>
