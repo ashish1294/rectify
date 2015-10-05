@@ -1,4 +1,4 @@
-import subprocess as sub
+import subprocess32 as sub
 import time, random, os
 
 
@@ -44,3 +44,27 @@ def fun(code, user_code, user_input):
 		return 0, None				#Correct Ans
 	else:
 		return 4, None				#Wrong Ans
+
+
+if __name__ == '__main__':
+	user_input = '1 2 3'
+	code = """
+	#include <stdio.h>
+	int main()
+	{
+		printf("HEllo World");
+		return 0;
+	}
+	"""
+	
+	user_code = """
+	#include <stdio.h>
+	int main()
+	{
+		while(1);
+		printf("HEllo World");
+		return 0;
+	}
+	"""
+
+	fun(code, user_code, user_input)
