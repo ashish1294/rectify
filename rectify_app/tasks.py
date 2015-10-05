@@ -51,36 +51,60 @@ def judge_solution_easy_cases(solution_id, is_system_test = False):
   fp.close()
 
   #Compiling the file
-  process = subprocess.Popen(['g++', '-o', file_name, full_file_name],
-    stdin = subprocess.PIPE,
-    stdout = subprocess.PIPE,
-    stderr = subprocess.PIPE
-  )
-  (output, error) = process.communicate()
-  ret_code = process.poll()
-  if ret_code == 0: #Compilation Successful
+  try:
+    signal.signal(signal.SIGALRM, raise_timeout_exception)
+    signal.alarm(5)
+    process = subprocess.Popen(['g++', '-o', file_name, full_file_name],
+      stdin = subprocess.PIPE,
+      stdout = subprocess.PIPE,
+      stderr = subprocess.PIPE
+    )
+    (output, error) = process.communicate()
+    signal.alarm(0)
+    ret_code = process.poll()
+  except ProcessTimeOutException:
+    ret_code = -1
+    error = "The code compilation is timed - out :( Try with optimizing code"
+
+  if ret_code is not 0:
+    #Compilation Unsuccessful
+    with transaction.atomic():
+      # Storing Error Message
+      solution.status = Solution.COMPILE_ERROR
+      solution.compile_throw = error
+      solution.save()
+
+      #Updating all the test case results
+      for result in result_list:
+        if result.status == result.WAITING:
+          result.status = TestCaseResult.COMPILE_ERROR
+          result.save()
+
+  else:
+    # Now Run All Test Cases
     # Total Scores that a participant can earn
     total_score = 0
     #Max Score earned by participant for this problem
     max_score = solution.participant.solutions.filter(
-      problem__id = solution.problem.id).aggregate(Max('score_earned'))['score_earned__max']
+      problem__id = solution.problem.id).aggregate(
+        Max('score_earned'))['score_earned__max']
     score_earned = 0
 
     #Judging Each Solution
     for result in result_list:
       total_score += result.test_case.points
       if result.status == TestCaseResult.WAITING:
-        proc = subprocess.Popen(['./' + file_name],
-          stdin = subprocess.PIPE,
-          stdout = subprocess.PIPE)
         try:
           # Creating a TimeOut. SIGALRM is passed after timelimit
           signal.signal(signal.SIGALRM, raise_timeout_exception)
           signal.alarm(solution.problem.time_limit + 1)
+          proc = subprocess.Popen(['./' + file_name],
+            stdin = subprocess.PIPE,
+            stdout = subprocess.PIPE)
           output = proc.communicate(input = str(result.test_case.input_data))[0]
           signal.alarm(0)
           ret_code = proc.poll()
-          if ret_code < 0 :
+          if ret_code is None or ret_code < 0 :
             # Runtime Error Was Called
             result.status = TestCaseResult.RUNTIME_ERROR
           else:
@@ -92,7 +116,6 @@ def judge_solution_easy_cases(solution_id, is_system_test = False):
             else:
               result.status = TestCaseResult.WRONG_ANS
         except ProcessTimeOutException:
-          print "Process Timeout"
           result.status = TestCaseResult.TIME_LIMIT_EXCEEDED
         except Exception:
           result.status = TestCaseResult.UNKNOWN_ERROR
@@ -122,27 +145,12 @@ def judge_solution_easy_cases(solution_id, is_system_test = False):
       solution.participant.org_score += score_earned - max_score
       solution.participant.save()
 
-  else:
-    #Compilation Unsuccessful
-    with transaction.atomic():
-      # Storing Error Message
-      solution.status = Solution.COMPILE_ERROR
-      solution.compile_throw = error
-      solution.save()
-
-      #Updating all the test case results
-      for result in result_list:
-        if result.status == result.WAITING:
-          result.status = TestCaseResult.COMPILE_ERROR
-          result.save()
-
   # Cleaning Up the temporary code files
   os.remove(file_name)
   os.remove(full_file_name)
 
 @shared_task
 def judge_challenge(challenge_id):
-  print "Juding Challenge id ", challenge_id
   challenge = Challenge.objects.get(id = challenge_id)
 
   # Generating a random file name for problem setter's source code
@@ -160,18 +168,18 @@ def judge_challenge(challenge_id):
   )
   (output, error) = process.communicate()
 
-  proc = subprocess.Popen(['./' + file_name_ps],
-    stdin = subprocess.PIPE,
-    stdout = subprocess.PIPE)
   try:
     # Creating a TimeOut. SIGALRM is passed after timelimit
     signal.signal(signal.SIGALRM, raise_timeout_exception)
     signal.alarm(challenge.solution.problem.time_limit + 1)
+    proc = subprocess.Popen(['./' + file_name_ps],
+      stdin = subprocess.PIPE,
+      stdout = subprocess.PIPE)
     expected_output = proc.communicate(input = challenge.input_data)[0]
     signal.alarm(0)
     expected_output = str(expected_output).translate(None, string.whitespace)
     ret_code = proc.poll()
-    if ret_code != 0:
+    if ret_code is None or ret_code != 0:
       challenge.status = Challenge.INVALID_INPUT
   except ProcessTimeOutException:
     challenge.status = Challenge.INVALID_INPUT

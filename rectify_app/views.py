@@ -168,8 +168,10 @@ def my_submissions(request):
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
   context = {
-    'solution_list' : request.user.participant.solutions.all(),
-    'challenge_list' : request.user.participant.challenges_posted.all(),
+    'solution_list' : request.user.participant.solutions.order_by(
+      '-submit_time'),
+    'challenge_list' : request.user.participant.challenges_posted.order_by(
+      '-submit_time'),
   }
   return render(request, 'mysubmissions.html', context)
 

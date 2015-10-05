@@ -64,7 +64,8 @@ class Announcements(models.Model):
     ordering = ['-time_posted']
 
   def __str__(self):
-    return str(self.text[:len(self.text) if len(self.text) < 11 else 10])
+    return str(self.id) + ' - ' + str(self.text[:len(self.text)
+      if len(self.text) < 11 else 10])
 
 class Participant(models.Model):
   user = models.OneToOneField(User,
@@ -152,6 +153,9 @@ class TestCases(models.Model):
     self.output_data = str(self.output_data).translate(None, string.whitespace)
     super(TestCases, self).save(*args, **kwargs)
 
+  def __str__(self):
+    return str(self.id)
+
 class Solution(models.Model):
   PROCESSING = 'pr'
   COMPILE_ERROR = 'ce'
@@ -169,7 +173,7 @@ class Solution(models.Model):
   language = models.CharField(max_length = 10, default = 'cpp')
   test_results = models.ManyToManyField(TestCases, through = 'TestCaseResult')
   score_earned = models.IntegerField(default = 0)
-  compile_throw = models.TextField(defaultefault = '')
+  compile_throw = models.TextField(default = '')
   status = models.CharField(max_length = 10, default = PROCESSING)
   submit_time = models.DateTimeField(auto_now_add = True)
 
@@ -178,7 +182,10 @@ class Solution(models.Model):
     return hasattr(self, 'challenge')
 
   def __str__(self):
-    return str(self.problem) + str(self.participant)
+    return str(self.id)
+
+  class Meta:
+    ordering = ['-submit_time']
 
 class TestCaseResult(models.Model):
   WAITING = 'wt'
@@ -200,6 +207,9 @@ class TestCaseResult(models.Model):
   status = models.CharField(max_length = 10, default = WAITING)
   creation_time = models.DateTimeField(auto_now_add = True)
   last_updated = models.DateTimeField(auto_now = True)
+
+  def __str__(self):
+    return str(self.id)
 
   class Meta:
     unique_together = ('solution', 'test_case')
