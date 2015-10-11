@@ -145,8 +145,8 @@ def judge_solution_easy_cases(solution_id, is_system_test = False):
       solution.participant.org_score += score_earned - max_score
       solution.participant.save()
 
-  # Cleaning Up the temporary code files
-  os.remove(file_name)
+    # Cleaning Up the temporary code files
+    os.remove(file_name)
   os.remove(full_file_name)
 
 @shared_task
@@ -168,6 +168,9 @@ def judge_challenge(challenge_id):
   )
   (output, error) = process.communicate()
 
+  #Cleaning Problem Setter's Code
+  os.remove(full_file_name_ps)
+
   try:
     # Creating a TimeOut. SIGALRM is passed after timelimit
     signal.signal(signal.SIGALRM, raise_timeout_exception)
@@ -181,12 +184,11 @@ def judge_challenge(challenge_id):
     ret_code = proc.poll()
     if ret_code is None or ret_code != 0:
       challenge.status = Challenge.INVALID_INPUT
+    else:
+      # Cleaning Problem Setter's Binary
+      os.remove(file_name_ps)
   except ProcessTimeOutException:
     challenge.status = Challenge.INVALID_INPUT
-
-  #Cleaning Up
-  os.remove(full_file_name_ps)
-  os.remove(file_name_ps)
 
   if challenge.status != Challenge.INVALID_INPUT:
     # Generating a random file name for solution source code
@@ -205,17 +207,23 @@ def judge_challenge(challenge_id):
       stderr = subprocess.PIPE
     )
     (output, error) = process.communicate()
-    proc = subprocess.Popen(['./' + file_name],
-      stdin = subprocess.PIPE,
-      stdout = subprocess.PIPE)
+    #Cleaning Solution Code
+    os.remove(full_file_name)
+
     try:
       # Creating a TimeOut. SIGALRM is passed after timelimit
       signal.signal(signal.SIGALRM, raise_timeout_exception)
       signal.alarm(challenge.solution.problem.time_limit + 1)
+      proc = subprocess.Popen(['./' + file_name],
+        stdin = subprocess.PIPE,
+        stdout = subprocess.PIPE)
       obtained_output = proc.communicate(input = challenge.input_data)[0]
       signal.alarm(0)
       obtained_output = str(obtained_output).translate(None, string.whitespace)
       ret_code = proc.poll()
+      if ret_code == 0:
+        #Cleaning Up Binary
+        os.remove(file_name)
       if ret_code == 0 and obtained_output == expected_output:
         challenge.status = Challenge.FAILED
       else:
@@ -223,16 +231,14 @@ def judge_challenge(challenge_id):
     except ProcessTimeOutException:
       challenge.status = Challenge.SUCCESSFUL
 
-  # Cleaning Up
-  os.remove(file_name)
-  os.remove(full_file_name)
-
   # Updating objects based on the result
   # Change these contests if you want to change the score for challenge
   if challenge.status == Challenge.SUCCESSFUL:
     challenge.solution.participant.chal_score_lost += 50
     challenge.solution.participant.org_score -= 50
     challenge.solution.participant.save()
+    challenge.solution.is_hacked = True
+    challenge.solution.save()
     challenge.challenger.chal_score_earned += 50
     challenge.challenger.org_score += 50
   else:

@@ -176,10 +176,7 @@ class Solution(models.Model):
   compile_throw = models.TextField(default = '')
   status = models.CharField(max_length = 10, default = PROCESSING)
   submit_time = models.DateTimeField(auto_now_add = True)
-
-  @property
-  def is_hacked(self):
-    return hasattr(self, 'challenge')
+  is_hacked = models.BooleanField(default = False)
 
   def __str__(self):
     return str(self.id)
@@ -234,7 +231,7 @@ class Challenge(models.Model):
     on_delete = models.CASCADE,
     related_name = 'challenges_posted'
   )
-  solution = models.OneToOneField(Solution,
+  solution = models.ForeignKey(Solution,
     on_delete = models.CASCADE,
     related_name = 'challenge'
   )

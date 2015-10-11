@@ -8,6 +8,8 @@
     {% autoescape off %}
       {{problem.problem_text | linebreaksbr}}
     {% endautoescape %}
+    <br/>
+    <b>Time Limit : </b> {{problem.time_limit}}
   </p>
   <br/>
   {% if phase == meta.CODING_PHASE %}

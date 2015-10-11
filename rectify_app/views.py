@@ -156,7 +156,8 @@ def solve(request, problem_id):
 def solution(request, solution_id):
   if request.user.is_authenticated() is False:
     return HttpResponseRedirect('/')
-  context = {}
+  meta = Metadata.get_meta_data()
+  context = {'meta' : meta, 'phase' : meta.phase}
   try:
     context['solution'] = request.user.participant.solutions.get(
       id = int(solution_id))

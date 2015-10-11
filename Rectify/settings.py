@@ -84,7 +84,7 @@ DATABASES = {
         'PASSWORD' : '',
         'HOST' : '127.0.0.1',
         'PORT' : '3306',
-        'NAME' : 'rectify_2015'
+        'NAME' : 'rectify_round_3'
     }
 }
 

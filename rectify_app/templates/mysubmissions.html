@@ -35,7 +35,8 @@
                   {% elif solution.status == solution.SYS_TEST_PASSED %}
                     <span class="green-text">System Tests Passed</span>
                   {% endif %} <br/>
-                  <b>Time :</b> {{solution.submit_time|localtime}}
+                  <b>Time :</b> {{solution.submit_time|localtime}} <br/>
+                  <b>Score : </b>{{solution.score_earned}}
                 </div>
                 <div class="col s12 m4 l4">
                   <a href="/solution/{{solution.id}}" class="btn waves-effect waves-purple blue lighten-5 blue-text btn-large hoverable">View <i class="material-icons right">send</i></a>

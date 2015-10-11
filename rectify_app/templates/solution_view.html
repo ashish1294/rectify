@@ -108,6 +108,18 @@
         </div>
       </div>
     </div>
+    {% if phase == meta.ENDED %}
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Expected and Correct Code </span>
+              <pre><code class="cpp">{{solution.problem.correct_code}}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
     <script src="{% static 'js/highlight.pack.js' %}"></script>
     <script>hljs.initHighlightingOnLoad();</script>
   {% endif %}
