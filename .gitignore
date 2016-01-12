@@ -2,3 +2,4 @@
 *.DS_Store
 rectify_app/migrations/*
 Rectify/settings.py
+.*/*

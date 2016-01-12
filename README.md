@@ -18,12 +18,15 @@ Features
 
 Requirements
 ------------
+
 * django >= 1.8 (pip install django)
 * python-mysql (pip install mysql)
 * celery (apt-get install celery)
 * django-celery (pip install django-celery)
 * rabbitmq (apt-get instal rabbitmq-server)
 * mysql-server (apt-get install mysql-server)
+
+Note - It is recommended that you install virtualenv and install the project dependencies inside you. You can simply run `pip install requirements.txt` to install all 3rd party libraries.
 
 Features to be added
 --------------------
@@ -51,7 +54,7 @@ Deployment Steps
 * Install dependencies
 * Use Apache (personal choice)/ Nginx for creating WSGI Daemon and serving django-app
 * Run RabbitMQ AMPQ task broker
-* Run celery worker nodes
+* Run celery worker nodes - `celery worker -A Rectify -l info`
 * Run MySQL Server
 * Change the MetaData with contest time in Django Admin Panel
 * Start Server
