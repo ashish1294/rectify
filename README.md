@@ -55,7 +55,8 @@ Deployment Steps
 * Use Apache (personal choice)/ Nginx for creating WSGI Daemon and serving django-app
 * Run RabbitMQ AMPQ task broker
 * Run celery worker nodes - `celery worker -A Rectify -l info`
-* Run MySQL Server
+* Run MySQL Server `sudo service mysql start`
+* Create Appropriate Database
 * Change the MetaData with contest time in Django Admin Panel
 * Start Server
 * Run system test at the end of contest using custom command !!
