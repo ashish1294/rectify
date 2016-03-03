@@ -21,4 +21,13 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^/?$|^success/(\d+)/?$', signin),
     url(r'^register_participant/?$', register_participant),
+    url(r'^signout/?$', signout),
+    url(r'^dashboard/?$', dashboard),
+    url(r'^problem_list/?$', problem_list),
+    url(r'^solve/(\d+)/?$', solve),
+    url(r'^solution/(\d+)/?$', solution),
+    url(r'^mysubmissions/?$', my_submissions),
+    url(r'^leaderboard/?$', leaderboard),
+    url(r'^challenge/?$', hack_solutions),
+    url(r'^view_challenge/(\d+)/?$', view_challenge)
 ]

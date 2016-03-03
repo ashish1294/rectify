@@ -7,41 +7,259 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rectify, Engineer, NITK Surathkal">
     <meta name="author" content="Ashish Kedia, 12IT14">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="{% static 'images/favicon.png'%}">
 
     <title>Rectify - Engineer 2015 | Sign In</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <style type="text/css">
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        background : #eee;
+      }
+      main {
+        flex: 1 0 auto;
+      }
+      form {
+        margin: 2em auto;
+        padding: 2em 2em 2em 2em;
+        background: #fafafa;
+        border: 1px solid #ebebeb;
+        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+        width:90%;
+      }
+      .engi_logo_image {
+        position : absolute;
+        left: 50%;
+        margin-left: -258px;
+        max-width: 100vw;
+      }
+      .logo_text{
+        position: absolute;
+        max-width: 100vw;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      .engi_logo_image_footer {
+        display : inline-block;
+        height : 150px;
+        position : absolute;
+      }
+      .img_rot{
+        -webkit-animation:spin 30s linear infinite;
+        -moz-animation:spin 30s linear infinite;
+        animation:spin 30s linear infinite;
+      }
+      @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+      @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+      @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+      .parallax-container {
+        height : 500px;
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <form class="form-signin" method="POST" action="">
-        {% csrf_token %}
-        <h2 class="form-signin-heading">Please sign in</h2>
-        {% if success %}
-          <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Congratulations!</strong> {{success}}
+    <header>
+      <nav class="blue">
+        <div class="container" style="width:85%; height: 400px;">
+          <div class="nav-wrapper">
+            <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <a class="brand-logo" href="#">Rectify 2015</a>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/register_participant">Register</a></li>
+                <li><a href="http://engineer.org.in/">Engineer 2015</a></li>
+              </ul>
+              <ul id="slide-out" class="side-nav">
+                <li><a href="/register_participant">Register</a></li>
+                <li><a href="http://engineer.org.in/">Engineer 2015</a></li>
+              </ul>
+            </div>
           </div>
-        {% endif %}
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Oh Snap!</strong> <br/> {{form.non_field_errors}}
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="parallax-container" style="height : 300px;">
+        <div class="parallax"><img src="{% static 'images/engi.jpg' %}" style="width: 100%;"></div>
+      </div>
+      <div class="section grey darken-4">
+        <div class="row">
+          <div class="col s12 m12 l12 center">
+            <img src="{% static 'images/header.png' %}" alt="NITK Surathkal Presents Engineer 2015" style="max-width: 100vw"/>
           </div>
-        {% endif %}
-        <label for="{{form.user_name.id_for_label}}" class="sr-only">User Name</label> {{ form.user_name }} <br/>
-        <label for="{{form.password.id_for_label}}" class="sr-only">Password</label> {{ form.password }}
-        <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign In"/>
-        <br/> <br/>
-        <a class="btn btn-lg btn-success btn-block" href="/register_participant">New User Registration</a>
-      </form>
-    </div>
+          <div class="col l12 m12 s12 center">
+            <div style="min-height: 500px;">
+              <img src="{% static 'images/17.png' %}" class="engi_logo_image"/>
+              <img src="{% static 'images/ER.png' %}" class="engi_logo_image img_rot"/>
+              <img src="{% static 'images/circle_12.png' %}" class="engi_logo_image"/>
+            </div>
+          </div>
+          <div class="col l12 m12 s12 center">
+            <div style="min-height: 127px;">
+              <img src="{% static 'images/engix.png' %}" alt="" class="logo_text"/>
+              <img src="{% static 'images/engx.png' %}" alt="" class="logo_text"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="parallax-container">
+        <div class="parallax"><img src="{% static 'images/rectify.jpg' %}" style="width: 100%;"></div>
+      </div>
+      <div class="section" styele="color: #eee;">
+        <form class="hoverable" method="POST" action="">
+          {% csrf_token %}
+          <h2 class="form-signin-heading center-align">Sign In</h2>
+          {% if success %}
+            <script type="text/javascript">
+              $(document).ready(function(){
+                Materialize.toast('Congrats :) {{success}}', 4000);
+              });
+            </script>
+          {% endif %}
+          {% if form.non_field_errors %}
+            <script type="text/javascript">
+              $(document).ready(function(){
+                Materialize.toast('Unable to Log You In !!', 4000);
+              });
+            </script>
+            <div class="row center">
+              <div class="col l12 m12 s12">
+                <i class="medium material-icons red-text">error</i>
+              </div>
+              <div class="col s12 m12 l12">
+                <div class="card-panel hoverable red-text">
+                  {{form.non_field_errors}}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          <div class="container" style="width : 95%;">
+            <div class="row center">
+              <div class="col s12 m6 l4 input-field">
+                {{ form.user_name }}<label for="{{form.user_name.id_for_label}}" class="sr-only">User Name</label>
+              </div>
+              <div class="col s12 m6 l4 input-field">
+                {{ form.password }}<label for="{{form.password.id_for_label}}" class="sr-only">Password</label>
+              </div>
+              <div class="col s12 m12 l4 input-field center">
+                <button class="btn waves-effect waves-purple white btn-large blue-text" type="submit" name="action">
+                  Log In<i class="material-icons right">send</i>
+                </button>
+              </div>
+              <div class="col s12 l12 m12 center center-align">
+                <br/>
+                <a class="btn waves-effect waves-light blue btn-large" href="/register_participant" style="max-width : 500px;">New User Registration</a>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="parallax-container">
+        <div class="parallax"><img src="{% static 'images/comps_comm.jpg' %}" alt=""/></div>
+      </div>
+      <div class="section">
+        <h4 class="center-align">About Rectify</h4>
+        <div class="container">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4">Rectify Round 1</span>
+              <p class="flow-text center">
+                Rectify is an individual event which tests not only the mastery and
+                familiarity with a programming language but also the contestant's
+                dexterity in analyzing problems and providing logical solutions.
+                <br/>
+                The first round is a pencil and paper round where the participants are
+                given a set of small snippets of source code and are expected to
+                give the output. All questions are based on basic knowledge of C or C++.
+              </p>
+            </div>
+          </div>
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4">Rectify Round 2</span>
+              <p class="flow-text center">
+                The second round involves debugging the given code. Here you will be
+                given a code along with expected output and a short description of
+                the code's functionality. All codes are written in C-style C++. You are
+                expected to find the bug in the given code, correct it and submit it
+                within the given time frame. Your submitted code is judged against
+                multiple internal test cases to determine if your solution was correct.
+              </p>
+            </div>
+          </div>
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4">Rectify Final Round</span>
+              <p class="flow-text center">
+                The final round is modeled like a top coder challenge round.
+                The contest has 2 major phases. In the first of the two phases (Coding Phase),
+                contestants are given problem statements for which they have to come
+                up with a solution. Once the time for submitting solution finishes i.e,
+                after the end of coding phase, the second phase (Challenge / Hack Phase)
+                starts where the contestant will have access to the solutions submitted by
+                other participants and they can challenge the solutions with an their own
+                input - for which they think the solution will give wrong answer. If the
+                other contestant's solution gives wrong answer then the challenger
+                gains points and the challenged contestant loses points. If the
+                challenge fails then the challenger loses points. Finally everyone's
+                solution which are still standing are tested by the system and they
+                gain points if they pass system test. The one with the most points
+                wins.
+              </p>
+            </div>
+          </div>
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4">Rectify Venue and Prizes</span>
+              <p>
+                <b>Rectify round 1 :</b> 8th October(9 AM to 3 PM) @ Second Floor, New Teaching Block, NITK Surathkal<br/>
+                <b>Recrify round 2 :</b> 9th October(9 AM to 1 PM) @ CSE Lab, West Side Campus, NITK Surathkal<br/>
+                <b>Rectify Finals :</b> 10th October(2 PM to 5 PM) @ CSE Lab, West Side Campus, NITK Surathkal</br>
+                <br/>
+                Cash prizes worth <b>INR 5000</b> to be won.
+                <br/>
+                <h5 class='center-align'>Debug. Code. Win</h5>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="page-footer blue">
+      <div class="container">
+        <div class="row">
+          <div class="col l8 s12 m12">
+            <h5 class="white-text">Rectify @ Engineer 2015</h5>
+            <p class="grey-text text-lighten-4">This Application was developed for Rectify event of Engineer 2015</p>
+            <p class="grey-text text-lighten-4">Contact : <a href="mailto:ashish1294+rectify@gmail.com" class="grey-text text-lighten-3">ashish1294+rectify@gmail.com</a></p>
+            <br/>
+          </div>
+          <div class="col l4 m12 s12 center">
+            <div style="min-height : 150px;" class="center">
+              <img src="{% static 'images/17.png' %}" class="engi_logo_image_footer"/>
+              <img src="{% static 'images/ER.png' %}" class="engi_logo_image_footer img_rot"/>
+              <img src="{% static 'images/circle_12.png' %}" class="engi_logo_image_footer"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+        © 2015, Comps Committee, Engineer 2015
+        <a class="grey-text text-lighten-4 right" href="http://engineer.org.in/">Engineer, NITK Surathkal</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      $(document).ready(function(){
+         $('.parallax').parallax();
+       });
+      $(".button-collapse").sideNav();
+    </script>
   </body>
 </html>

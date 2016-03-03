@@ -1,0 +1,126 @@
+{% extends "dashboard.html" %}
+{% load tz %}
+{% load staticfiles %}
+{% block title %} View Solution - {{solution.problem.name}} {% endblock title %}
+{% block content %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
+  {% if not solution %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        Materialize.toast('Solution Unavailable', 4000);
+      });
+    </script>
+    <div class="row center">
+      <div class="col l12 m12 s12">
+        <i class="large material-icons red-text">error</i>
+      </div>
+      <div class="col s12 m12 l12">
+        <div class="card-panel hoverable">
+          <span class="red-text">This solution is unavailable !</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <br/>
+    <div class="card hoverable">
+      <div class="card-content">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <span class="card-title activator blue-text text-darken-4">At A Glance</span>
+          </div>
+          <div class="col s12 m12 l12">
+            <b>Submit Time : </b> {{ solution.submit_time | localtime }} <br/>
+            <b>Points Earned : </b> {{solution.score_earned}} <br/>
+            <b>Status : </b>
+            {% if solution.status == solution.PROCESSING %}
+              <span class="grey-text text-darken-2">Processing</span>
+            {% elif solution.status == solution.COMPILE_ERROR %}
+              <span class="yellow-text text-darken-3">Compilation Error</span> <br/>
+              <b>Error Message : </b> <br/>
+              <p><pre><code>{{solution.compile_throw}}</code></pre></p>
+            {% elif solution.status == solution.PRE_TEST_FAILED %}
+              <span class="red-text">Pre Tests Failed</span>
+            {% elif solution.status == solution.PRE_TEST_PASSED %}
+              <span class="green-text">Pre Tests Passed</span>
+            {% elif solution.status == solution.SYS_TEST_FAILED %}
+              <span class="red-text">System Test Passed</span>
+            {% elif solution.status == solution.SYS_TEST_PASSED %}
+              <span class="green-text">System Tests Passed</span>
+            {% endif %} <br/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <div class="card hoverable">
+          <div class="card-content">
+            <div class="row">
+              <div class="col s12 m12 l12 valign">
+                <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;">{{solution.problem.name}} - Detailed Result</span>
+              </div>
+            </div>
+            <div class="row">
+              <table class="striped centered">
+                <thead>
+                  <tr>
+                    <th data-field="id">Test Case</th>
+                    <th data-field="res">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for res in solution.test_case_results.all %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td>
+                        {% if res.status == res.WAITING %}
+                          <span class="grey-text text-darken-2" style="font-size: 20px;">Waiting</span>
+                        {% elif res.status == res.COMPILE_ERROR %}
+                          <span class="yellow-text text-darken-4" style="font-size: 20px;"><i class="material-icons tiny">warning</i> Compile Error</span>
+                        {% elif res.status == res.ACCEPTED %}
+                          <span class="green-text" style="font-size: 20px;"><i class="material-icons tiny">done</i> Accepted</span>
+                        {% elif res.status == res.WRONG_ANS %}
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">highlight_off</i> Wrong Answer</span>
+                        {% elif res.status == res.RUNTIME_ERROR %}
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">error_outline</i> Run Time Error</span>
+                        {% elif res.status == res.TIME_LIMIT_EXCEEDED %}
+                          <span class="yellow-text text-darken-4" style="font-size: 20px;"><i class="material-icons tiny">av_timer</i> Time Limit Exceeded</span>
+                        {% elif res.status == res.UNKNOWN_ERROR %}
+                          <span class="red-text" style="font-size: 20px;"><i class="material-icons tiny">error_outline</i> Unknown Error</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <div class="card hoverable">
+          <div class="card-content">
+            <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+            <pre><code class="cpp">{{solution.code}}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if phase == meta.ENDED %}
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Expected and Correct Code </span>
+              <pre><code class="cpp">{{solution.problem.correct_code}}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    <script src="{% static 'js/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  {% endif %}
+{% endblock content %}

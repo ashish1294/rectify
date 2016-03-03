@@ -1,0 +1,86 @@
+{% extends "dashboard.html" %}
+{% load staticfiles %}
+{% load tz %}
+{% block title %}Hack Solution{% endblock title %}
+{% block content %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
+  <br/> <br/>
+  {% if phase != meta.HACKING_PHASE %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        Materialize.toast('{{error}}', 4000);
+      });
+    </script>
+    <div class="row center">
+      <div class="col l12 m12 s12">
+        <i class="large material-icons red-text">error</i>
+      </div>
+      <div class="col s12 m12 l12">
+        <div class="card-panel hoverable">
+          <span class="red-text">Solutions cannot be challenged in this phase of the contest.</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    {% if form.non_field_errors %}
+      <div class="row center">
+        <div class="col l12 m12 s12">
+          <i class="large material-icons red-text">error</i>
+        </div>
+        <div class="col s12 m12 l12">
+          <div class="card-panel hoverable">
+            <span class="red-text">{{form.non_field_errors}}</span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    <form action="" method="POST" id="fetch_solution_form">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col s12 m6 l6 input-field">
+          {{form.participant}}
+          <label for="{{form.participant.id_for_label}}">Participant</label>
+        </div>
+        <div class="col s12 m6 l6 input-field">
+          {{form.problem}}
+          <label for="{{form.problem.id_for_label}}">Problem</label>
+        </div>
+        {% if solution %}
+          <div class="col s12 m12 l12">
+            <div class="card hoverable">
+              <div class="card-content">
+                <span class="card-title activator blue-text text-darken-4" style="font-weight: bold;"> Submitted Code </span>
+                <br/ ><b>Submit Time : </b> {{solution.submit_time | localtime}} <br/>
+                <pre><code class="cpp">{{solution.code}}</code></pre>
+                <br />
+                <div class="row">
+                  <div class="input-field col s12 m12 l12">
+                    {{form.input_data}}
+                    <label for="{{form.input_data.id_for_label}}">Input Data</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        <div class="col s12 m12 l12 center input-field">
+          <button class="btn waves-effect waves-light btn-large blue" type="submit" name="action">
+              {% if solution %}
+                Submit Hack
+              {% else %}
+                Fetch Solution
+              {% endif %}
+              <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+    </form>
+    {% if solution %}
+      <script src="{% static 'js/highlight.pack.js' %}"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+    {% endif %}
+    <script type="text/javascript">
+      $(document).ready(function() { $('select').material_select();});
+    </script>
+  {% endif %}
+{% endblock content %}
