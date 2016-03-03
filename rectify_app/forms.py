@@ -1,13 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
-
+from  models import Participant, Problem
 class ParticipantRegistrationForm(forms.Form):
   name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. Animesh Gupta',
       'autofocus' : 'autofocus'
     }),
     max_length = 200
@@ -15,56 +14,46 @@ class ParticipantRegistrationForm(forms.Form):
   user_name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. dark_master'
     }),
     max_length = 200,
-    label = "User Name"
   )
   email = forms.EmailField(
     required = True,
     widget = forms.EmailInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. dark123@gmail.com'
     }),
-    label = "Email Id"
   )
   college = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. NITK Surathkal'
     }),
     max_length = 300,
-    label = "Institution"
   )
   contact = forms.IntegerField(
     required = True,
     widget = forms.NumberInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
-      'placeholder' : 'Eg. 9965309653'
     }),
-    label = "Phone Number"
   )
   password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required'
     }),
-    label = "Password"
   )
   con_password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
+      'class' : 'validate',
       'required' : 'required',
     }),
-    label = "Confirm Password"
   )
 
   def clean(self):
@@ -89,9 +78,7 @@ class SignInForm(forms.Form):
   user_name = forms.CharField(
     required = True,
     widget = forms.TextInput(attrs = {
-      'class' : 'form-control',
-      'placeholder' : 'User Name',
-      'autofocus' : 'autofocus',
+      'class' : 'validate',
       'required' : 'required',
     }),
     max_length = 200,
@@ -100,16 +87,38 @@ class SignInForm(forms.Form):
   password = forms.CharField(
     required = True,
     widget = forms.PasswordInput(attrs = {
-      'class' : 'form-control',
-      'placeholder' : 'Password',
+      'class' : 'validate',
       'required' : 'required',
     }),
     label = "Password"
   )
 
-class SubmitSolutionForm(forms.Form):
-  code = forms.CharField(
-    label = "Paste Your Code Here",
-    widget = forms.TextInput(),
+class HackingRequestForm(forms.Form):
+  participant = forms.ChoiceField(
     required = True,
+    label = "Participant"
   )
+  problem = forms.ChoiceField(
+    required = True,
+    label = "Problem",
+  )
+  input_data = forms.CharField(
+    required = False,
+    label = "Input Data",
+    widget = forms.Textarea(attrs = {'class' : 'materialize-textarea'})
+  )
+
+  def __init__(self, *args, **kwargs):
+    super(HackingRequestForm, self).__init__(*args, **kwargs)
+    self.fields['participant'] = forms.ChoiceField(
+      choices = tuple((p.id, p.name) for p in Participant.objects.only('id',
+        'name')),
+      required = True,
+      label = "Participant"
+    )
+    self.fields['problem'] = forms.ChoiceField(
+      choices = tuple((p.id, p.name) for p in Problem.objects.only('id',
+        'name')),
+      required = True,
+      label = "Problem"
+    )

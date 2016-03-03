@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,39 +8,179 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Rectify, Engineer, NITK Surathkal">
     <meta name="author" content="Ashish Kedia, 12IT14">
-    <link rel="icon" href="favicon.ico">
-
-    <title>Rectify - Engineer 2015 | Dashboard</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'jquery-1.11.3.min.js' %}"></script>
+    <link rel="icon" href="{% static 'images/favicon.png'%}">
+    <title>Rectify - Engineer 2015 | {{request.user}} | {% block title %}Dashboard {% endblock%}</title>
+    <!--<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">-->
+    <link href="{% static 'css/materialize.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>-->
+    <style type="text/css">
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      main {
+        flex: 1 0 auto;
+      }
+      .engi_logo_image {
+        display : inline-block;
+        height : 150px;
+        position : absolute;
+      }
+      .img_rot{
+        -webkit-animation:spin 30s linear infinite;
+        -moz-animation:spin 30s linear infinite;
+        animation:spin 30s linear infinite;
+      }
+      @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+      @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+      @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Rectify 2015</a>
-          </div>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/dashboard">Dashboard</a></li>
-              <li><a href="/problems">Problems</a></li>
-              <li><a href="/leaderboard/">Leaderboard</a></li>
-              <li><a href="/solutions/">Hack Solutions</a></li>
-              <li><a href="/mysubmissions/">My Submission</a></li>
-            </ul>
+    <header>
+      <ul id="user_dropdown" class="dropdown-content">
+        <li><a href="/signout">Log Out</a></li>
+      </ul>
+      <nav class="blue">
+        <div class="container" style="width:85%;">
+          <div class="nav-wrapper">
+            <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <a class="brand-logo" href="#">Rectify 2015</a>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/problem_list">Problems</a></li>
+                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li><a href="/challenge">Hack</a></li>
+                <li><a href="/mysubmissions">My Submission</a></li>
+                <li><a class="dropdown-button" href="#!" data-activates="user_dropdown"> Welcome {{request.user.participant.name}} <i class="material-icons right">arrow_drop_down</i></a></li>
+              </ul>
+              <ul id="slide-out" class="side-nav">
+                <p class="blue-text text-darken-2" style="padding-left: 20px;">Welcome {{request.user.participant.name}} </p>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/problem_list">Problems</a></li>
+                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li><a href="/challenge">Hack</a></li>
+                <li><a href="/mysubmissions">My Submission</a></li>
+                <li><a href="/signout">Log Out</a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </nav>
-      {% block content %}
-      {% endblock %}
-    </div>
+    </header>
+    <main>
+      <div class="container">
+        {% block content %}
+          <div class="row">
+            <h1 class="black-text center">Welcome to Rectify 2015</h1>
+          </div>
+          <div class="row">
+
+            <!-- Contest Status Card -->
+            <div class="col s12 m12">
+              <div class="card hoverable">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Contest Status</span>
+                  <p>
+                    {% if phase == meta.YET_TO_START %}
+                      The Contest has not started yet. <br/>
+                      <b>Start Time : </b> {{meta.coding_start_time | localtime }}
+                    {% elif phase == meta.CODING_PHASE %}
+                      Coding Phase is in Progress. Go ahead. Code<br/>
+                      <b>Coding Phase End Time : </b> {{meta.coding_end_time | localtime }}
+                    {% elif phase == meta.BREAK_PHASE %}
+                      Coding Phase Has Ended. This is a break time. Relax. And gear up for hacking <br/>
+                      <b>Hacking Start Time : </b> {{meta.hacking_start_time | localtime }}
+                    {% elif phase == meta.HACKING_PHASE %}
+                      Hacking Phase is in Progress. Go ahead. Hack <br/>
+                      <b>Hacking Phase End Time : </b> {{meta.hacking_end_time | localtime }}
+                    {% else %}
+                      The contest has ended already. <br/>
+                      <b>Contest End Time : </b> {{meta.hacking_end_time | localtime}}
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Performance Card -->
+            <div class="col s12 m12">
+              <div class="card hoverable">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Your Performance<i class="material-icons right">more_vert</i></span>
+                  <p><b>Your Score :</b> {{request.user.participant.org_score}}</p>
+                  <p><b>Your Rank :</b> {{request.user.participant.rank}} </p>
+                  <p><b>Problems with Pre-Test Solved :</b> {{request.user.participant.pretest_solved}} </p>
+                  <p><b>Problems Fully Solved :</b> {{request.user.participant.systest_solved}}</p>
+                  <p><b>Solutions Hacked :</b> {{request.user.participant.no_of_successful_hack}} </p>
+                </div>
+                <div class="card-reveal">
+                  <span class="card-title blue-text text-darken-4">Your Performance<i class="material-icons right">close</i></span>
+                  <p><b>Please Note :</b>This is just a tentative performance. There may be some solutions in the queue waiting to be judged.</p>
+                  <p>Final Ranking may be different than this.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcement Card -->
+            <div class="col s12 m12">
+              <div class="card hoverable">
+                <div class="card-content">
+                  <span class="card-title activator blue-text text-darken-4">Announcements<i class="material-icons right">more_vert</i></span>
+                  {% if announcement_list|length == 0 %}
+                    <p>No Messages at the moment !</p>
+                  {% else %}
+                    <ul>
+                    {% for notice in announcement_list %}
+                      <li class="valign-wrapper" style="margin-top: 10px;"> <i class="material-icons small">done</i><p class="valign" style="margin-left: 10px;"> {{notice.text}} </p></li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+                </div>
+                <div class="card-reveal">
+                  <span class="card-title blue-text text-darken-4">Announcements<i class="material-icons right">close</i></span>
+                  <p>Here you can find all the messages posted by the contest admin for all the contestants. Please Check this regularly for important notice.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endblock %}
+      </div>
+    </main>
+    <footer class="page-footer blue">
+      <div class="container">
+        <div class="row">
+          <div class="col l8 s12 m12">
+            <h5 class="white-text">Rectify @ Engineer 2015</h5>
+            <p class="grey-text text-lighten-4">This Application was developed for Rectify event of Engineer 2015</p>
+            <br/></br>
+          </div>
+          <div class="col l4 m12 s12 center">
+            <div style="min-height : 150px;" class="center">
+              <img src="{% static 'images/17.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+              <img src="{% static 'images/ER.png' %}" alt="Engineer Logo Background" class="engi_logo_image img_rot"/>
+              <img src="{% static 'images/circle_12.png' %}" alt="Engineer Logo Background" class="engi_logo_image"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+        © 2015, Comps Committee, Engineer 2015
+        <a class="grey-text text-lighten-4 right" href="http://engineer.org.in/">Engineer, NITK Surathkal</a>
+        </div>
+      </div>
+    </footer>
   </body>
+  <script type="text/javascript">
+    $(".button-collapse").sideNav();
+  </script>
 </html>

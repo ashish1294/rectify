@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djcelery',
     'rectify_app'
 )
 
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug' : True,
         },
     },
 ]
@@ -82,7 +84,7 @@ DATABASES = {
         'PASSWORD' : '',
         'HOST' : '127.0.0.1',
         'PORT' : '3306',
-        'NAME' : 'rectify_2015'
+        'NAME' : 'rectify_round_3'
     }
 }
 
@@ -92,7 +94,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -108,3 +110,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(os.path.join(BASE_DIR, 'rectify_app'), 'static'),
 )
+
+#Celery Settings
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+BROKER_URL = 'amqp://guest:guest@localhost:5672/'
